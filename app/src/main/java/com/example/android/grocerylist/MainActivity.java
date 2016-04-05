@@ -1,5 +1,9 @@
 package com.example.android.grocerylist;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +24,6 @@ public class MainActivity extends AppCompatActivity
         implements ItemDialogFragment.ItemDialogListener {
     private ArrayList<String> data;
     private ItemAdapter adapter;
-    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +43,11 @@ public class MainActivity extends AppCompatActivity
 
         data = new ArrayList<>();
         adapter = new ItemAdapter();
-        listView = (ListView) findViewById(R.id.list);
+        ListView listView = (ListView) findViewById(R.id.list);
         assert listView != null;
         listView.setAdapter(adapter);
+        ReadItemsTask itemsTask = new ReadItemsTask();
+        itemsTask.execute();
     }
 
     @Override
@@ -71,10 +76,10 @@ public class MainActivity extends AppCompatActivity
     public void onOKButtonClick(String item) {
         data.add(item);
         adapter.notifyDataSetChanged();
+        WriteItemsTask itemsTask = new WriteItemsTask();
+        itemsTask.execute(item);
+
     }
-
-
-
 
     private class ItemAdapter extends BaseAdapter {
 
@@ -109,6 +114,7 @@ public class MainActivity extends AppCompatActivity
             holder.checkBox.setChecked(false);
             return view;
         }
+
         private class ViewHolder {
             final CheckBox checkBox;
             final TextView textView;
@@ -129,6 +135,54 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+    }
+    private class WriteItemsTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            ItemWriterDBHelper dbHelper = new ItemWriterDBHelper(getApplicationContext());
+            SQLiteDatabase database = dbHelper.getWritableDatabase();
+            String item = params[0];
+            ContentValues values = new ContentValues();
+            values.put("item_name", item);
+            database.insert("items", null, values);
+            database.close();
+            return null;
+        }
+    }
+
+    private class ReadItemsTask extends AsyncTask<Void, Void, ArrayList<String>> {
+
+        @Override
+        protected ArrayList<String> doInBackground(Void... params) {
+            ItemWriterDBHelper dbHelper = new ItemWriterDBHelper(getApplicationContext());
+            SQLiteDatabase database = dbHelper.getReadableDatabase();
+            ArrayList<String> items = new ArrayList<>();
+            String[] result = {ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME};
+            Cursor cursor = database.query(
+                    ItemWriterContract.ItemEntry.TABLE_NAME,
+                    result,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+            while (cursor.moveToNext()) {
+                String itemName = cursor.getString(cursor.getColumnIndexOrThrow
+                        (ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME));
+                items.add(itemName);
+            }
+            cursor.close();
+            database.close();
+            return items;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> items) {
+            data = items;
+            adapter.notifyDataSetChanged();
+        }
     }
 }
 
