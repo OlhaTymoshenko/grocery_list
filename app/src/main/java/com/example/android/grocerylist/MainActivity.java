@@ -128,6 +128,8 @@ public class MainActivity extends AppCompatActivity
                             String text = textView.getText().toString();
                             data.remove(text);
                             adapter.notifyDataSetChanged();
+                            DeleteItemsTask itemsTask = new DeleteItemsTask();
+                            itemsTask.execute(text);
                         }
                     }
                 });
@@ -182,6 +184,21 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(ArrayList<String> items) {
             data = items;
             adapter.notifyDataSetChanged();
+        }
+    }
+
+    private class DeleteItemsTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            ItemWriterDBHelper dbHelper = new ItemWriterDBHelper(getApplicationContext());
+            SQLiteDatabase database = dbHelper.getWritableDatabase();
+            String item = params[0];
+            String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME + " LIKE ?";
+            String[] selectionArgs = {item};
+            database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, selection, selectionArgs);
+            database.close();
+            return null;
         }
     }
 }
