@@ -1,7 +1,8 @@
 package com.example.android.grocerylist;
 
+import android.app.LoaderManager;
 import android.content.ContentValues;
-import android.database.Cursor;
+import android.content.Loader;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,7 +22,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements ItemDialogFragment.ItemDialogListener {
+        implements ItemDialogFragment.ItemDialogListener,
+        LoaderManager.LoaderCallbacks<ArrayList<String>> {
     private ArrayList<String> data;
     private ItemAdapter adapter;
 
@@ -46,8 +48,7 @@ public class MainActivity extends AppCompatActivity
         ListView listView = (ListView) findViewById(R.id.list);
         assert listView != null;
         listView.setAdapter(adapter);
-        ReadItemsTask itemsTask = new ReadItemsTask();
-        itemsTask.execute();
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -79,6 +80,24 @@ public class MainActivity extends AppCompatActivity
         WriteItemsTask itemsTask = new WriteItemsTask();
         itemsTask.execute(item);
 
+    }
+
+    @Override
+    public Loader<ArrayList<String>> onCreateLoader(int id, Bundle args) {
+        ItemsLoader loader = new ItemsLoader(MainActivity.this);
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
+        this.data = data;
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<String>> loader) {
+        data = null;
+        adapter.notifyDataSetChanged();
     }
 
     private class ItemAdapter extends BaseAdapter {
@@ -150,40 +169,6 @@ public class MainActivity extends AppCompatActivity
             database.insert("items", null, values);
             database.close();
             return null;
-        }
-    }
-
-    private class ReadItemsTask extends AsyncTask<Void, Void, ArrayList<String>> {
-
-        @Override
-        protected ArrayList<String> doInBackground(Void... params) {
-            ItemWriterDBHelper dbHelper = new ItemWriterDBHelper(getApplicationContext());
-            SQLiteDatabase database = dbHelper.getReadableDatabase();
-            ArrayList<String> items = new ArrayList<>();
-            String[] result = {ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME};
-            Cursor cursor = database.query(
-                    ItemWriterContract.ItemEntry.TABLE_NAME,
-                    result,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-            while (cursor.moveToNext()) {
-                String itemName = cursor.getString(cursor.getColumnIndexOrThrow
-                        (ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME));
-                items.add(itemName);
-            }
-            cursor.close();
-            database.close();
-            return items;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<String> items) {
-            data = items;
-            adapter.notifyDataSetChanged();
         }
     }
 
