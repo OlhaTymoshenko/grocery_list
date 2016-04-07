@@ -73,8 +73,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onOKButtonClick(String item) {
-        data.add(item);
-        adapter.notifyDataSetChanged();
         WriteItemsTask itemsTask = new WriteItemsTask();
         itemsTask.execute(item);
 
@@ -141,8 +139,6 @@ public class MainActivity extends AppCompatActivity
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             String text = textView.getText().toString();
-                            data.remove(text);
-                            adapter.notifyDataSetChanged();
                             DeleteItemsTask itemsTask = new DeleteItemsTask();
                             itemsTask.execute(text);
                         }

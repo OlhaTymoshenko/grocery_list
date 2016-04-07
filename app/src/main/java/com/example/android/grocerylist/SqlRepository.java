@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 
 /**
@@ -23,6 +25,7 @@ public class SqlRepository {
         values.put("item_name", item);
         database.insert("items", null, values);
         database.close();
+        EventBus.getDefault().post(new ItemsUpdatedEvent());
     }
 
     public void deleteItems(String item) {
@@ -31,6 +34,7 @@ public class SqlRepository {
         String[] selectionArgs = {item};
         database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, selection, selectionArgs);
         database.close();
+        EventBus.getDefault().post(new ItemsUpdatedEvent());
     }
 
     public ArrayList<String> findItems() {

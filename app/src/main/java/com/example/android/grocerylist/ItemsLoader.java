@@ -3,6 +3,9 @@ package com.example.android.grocerylist;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 
 /**
@@ -24,6 +27,18 @@ public class ItemsLoader extends AsyncTaskLoader<ArrayList<String>> {
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
+        forceLoad();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStopLoading() {
+        EventBus.getDefault().unregister(this);
+        super.onStopLoading();
+    }
+
+    @Subscribe
+    public void onItemsUpdatedEvent(ItemsUpdatedEvent event) {
         forceLoad();
     }
 }
