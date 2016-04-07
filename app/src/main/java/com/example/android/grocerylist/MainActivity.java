@@ -1,9 +1,7 @@
 package com.example.android.grocerylist;
 
 import android.app.LoaderManager;
-import android.content.ContentValues;
 import android.content.Loader;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -96,8 +94,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<ArrayList<String>> loader) {
-        data = null;
-        adapter.notifyDataSetChanged();
     }
 
     private class ItemAdapter extends BaseAdapter {
@@ -161,13 +157,9 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(String... params) {
-            ItemWriterDBHelper dbHelper = new ItemWriterDBHelper(getApplicationContext());
-            SQLiteDatabase database = dbHelper.getWritableDatabase();
             String item = params[0];
-            ContentValues values = new ContentValues();
-            values.put("item_name", item);
-            database.insert("items", null, values);
-            database.close();
+            SqlRepository repository = new SqlRepository(getApplicationContext());
+            repository.addItems(item);
             return null;
         }
     }
@@ -176,13 +168,9 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(String... params) {
-            ItemWriterDBHelper dbHelper = new ItemWriterDBHelper(getApplicationContext());
-            SQLiteDatabase database = dbHelper.getWritableDatabase();
             String item = params[0];
-            String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME + " LIKE ?";
-            String[] selectionArgs = {item};
-            database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, selection, selectionArgs);
-            database.close();
+            SqlRepository repository = new SqlRepository(getApplicationContext());
+            repository.deleteItems(item);
             return null;
         }
     }
