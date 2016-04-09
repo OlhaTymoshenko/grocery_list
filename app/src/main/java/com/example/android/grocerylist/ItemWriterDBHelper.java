@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by lapa on 04.04.16.
  */
 public class ItemWriterDBHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "ItemWriter.db";
 
     public ItemWriterDBHelper (Context context) {
@@ -25,7 +25,7 @@ public class ItemWriterDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS" + ItemWriterContract.ItemEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + ItemWriterContract.ItemEntry.TABLE_NAME);
         onCreate(db);
     }
 }

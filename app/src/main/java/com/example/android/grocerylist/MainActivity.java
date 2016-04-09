@@ -103,12 +103,14 @@ public class MainActivity extends AppCompatActivity
             TaskModel item = getItem(position);
             holder.textView.setText(item.getItemName());
             holder.checkBox.setChecked(false);
+            holder.item = item;
             return view;
         }
 
         private class ViewHolder {
             final CheckBox checkBox;
             final TextView textView;
+            TaskModel item;
 
             private ViewHolder(View view) {
                 checkBox = (CheckBox) view.findViewById(R.id.checkbox);
@@ -116,11 +118,8 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
-                            String text = textView.getText().toString();
-                            TaskModel model = new TaskModel();
-                            model.setItemName(text);
                             DeleteItemsTask itemsTask = new DeleteItemsTask();
-                            itemsTask.execute(model);
+                            itemsTask.execute(item);
                         }
                     }
                 });
