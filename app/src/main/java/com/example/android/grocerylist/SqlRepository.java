@@ -19,27 +19,27 @@ public class SqlRepository {
         dbHelper = new ItemWriterDBHelper(context);
     }
 
-    public void addItems(String item) {
+    public void addItems(TaskModel item) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("item_name", item);
+        values.put("item_name", item.getItemName());
         database.insert("items", null, values);
         database.close();
         EventBus.getDefault().post(new ItemsUpdatedEvent());
     }
 
-    public void deleteItems(String item) {
+    public void deleteItems(TaskModel item) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME + " LIKE ?";
-        String[] selectionArgs = {item};
+        String[] selectionArgs = {item.getItemName()};
         database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, selection, selectionArgs);
         database.close();
         EventBus.getDefault().post(new ItemsUpdatedEvent());
     }
 
-    public ArrayList<String> findItems() {
+    public ArrayList<TaskModel> findItems() {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        ArrayList<String> items = new ArrayList<>();
+        ArrayList<TaskModel> items = new ArrayList<>();
         String[] result = {ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME};
         Cursor cursor = database.query(
                 ItemWriterContract.ItemEntry.TABLE_NAME,
@@ -53,7 +53,9 @@ public class SqlRepository {
         while (cursor.moveToNext()) {
             String itemName = cursor.getString(cursor.getColumnIndexOrThrow
                     (ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME));
-            items.add(itemName);
+            TaskModel model = new TaskModel();
+            model.setItemName(itemName);
+            items.add(model);
         }
         cursor.close();
         database.close();

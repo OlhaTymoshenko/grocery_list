@@ -19,8 +19,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements ItemDialogFragment.ItemDialogListener,
-        LoaderManager.LoaderCallbacks<ArrayList<String>> {
-    private ArrayList<String> data;
+        LoaderManager.LoaderCallbacks<ArrayList<TaskModel>> {
+    private ArrayList<TaskModel> data;
     private ItemAdapter adapter;
 
     @Override
@@ -50,24 +50,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onOKButtonClick(String item) {
         WriteItemsTask itemsTask = new WriteItemsTask();
-        itemsTask.execute(item);
+        TaskModel model = new TaskModel();
+        model.setItemName(item);
+        itemsTask.execute(model);
 
     }
 
     @Override
-    public Loader<ArrayList<String>> onCreateLoader(int id, Bundle args) {
+    public Loader<ArrayList<TaskModel>> onCreateLoader(int id, Bundle args) {
         ItemsLoader loader = new ItemsLoader(MainActivity.this);
         return loader;
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
+    public void onLoadFinished(Loader<ArrayList<TaskModel>> loader, ArrayList<TaskModel> data) {
         this.data = data;
         adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<String>> loader) {
+    public void onLoaderReset(Loader<ArrayList<TaskModel>> loader) {
     }
 
     private class ItemAdapter extends BaseAdapter {
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        public String getItem(int position) {
+        public TaskModel getItem(int position) {
             return data.get(position);
         }
 
@@ -98,8 +100,8 @@ public class MainActivity extends AppCompatActivity
                 view = convertView;
             }
             ViewHolder holder = (ViewHolder) view.getTag();
-            String item = getItem(position);
-            holder.textView.setText(item);
+            TaskModel item = getItem(position);
+            holder.textView.setText(item.getItemName());
             holder.checkBox.setChecked(false);
             return view;
         }
@@ -115,8 +117,10 @@ public class MainActivity extends AppCompatActivity
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             String text = textView.getText().toString();
+                            TaskModel model = new TaskModel();
+                            model.setItemName(text);
                             DeleteItemsTask itemsTask = new DeleteItemsTask();
-                            itemsTask.execute(text);
+                            itemsTask.execute(model);
                         }
                     }
                 });
@@ -125,22 +129,22 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
-    private class WriteItemsTask extends AsyncTask<String, Void, Void> {
+    private class WriteItemsTask extends AsyncTask<TaskModel, Void, Void> {
 
         @Override
-        protected Void doInBackground(String... params) {
-            String item = params[0];
+        protected Void doInBackground(TaskModel... params) {
+            TaskModel item = params[0];
             SqlRepository repository = new SqlRepository(getApplicationContext());
             repository.addItems(item);
             return null;
         }
     }
 
-    private class DeleteItemsTask extends AsyncTask<String, Void, Void> {
+    private class DeleteItemsTask extends AsyncTask<TaskModel, Void, Void> {
 
         @Override
-        protected Void doInBackground(String... params) {
-            String item = params[0];
+        protected Void doInBackground(TaskModel... params) {
+            TaskModel item = params[0];
             SqlRepository repository = new SqlRepository(getApplicationContext());
             repository.deleteItems(item);
             return null;
