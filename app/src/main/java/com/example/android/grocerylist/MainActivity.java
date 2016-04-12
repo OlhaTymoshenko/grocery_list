@@ -1,19 +1,16 @@
 package com.example.android.grocerylist;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -40,10 +37,12 @@ public class MainActivity extends AppCompatActivity
         });
 
         data = new ArrayList<>();
-        adapter = new ItemAdapter();
-        ListView listView = (ListView) findViewById(R.id.list);
-        assert listView != null;
-        listView.setAdapter(adapter);
+        adapter = new ItemAdapter(data);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
+        assert recyclerView != null;
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -65,6 +64,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<ArrayList<TaskModel>> loader, ArrayList<TaskModel> data) {
         this.data = data;
+        adapter.setData(data);
         adapter.notifyDataSetChanged();
     }
 
@@ -72,62 +72,6 @@ public class MainActivity extends AppCompatActivity
     public void onLoaderReset(Loader<ArrayList<TaskModel>> loader) {
     }
 
-    private class ItemAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return data.size();
-        }
-
-        @Override
-        public TaskModel getItem(int position) {
-            return data.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view;
-            if (convertView == null) {
-                view = getLayoutInflater().inflate(R.layout.list_item, parent, false);
-                ViewHolder holder = new ViewHolder(view);
-                view.setTag(holder);
-            } else {
-                view = convertView;
-            }
-            ViewHolder holder = (ViewHolder) view.getTag();
-            TaskModel item = getItem(position);
-            holder.textView.setText(item.getItemName());
-            holder.checkBox.setChecked(false);
-            holder.item = item;
-            return view;
-        }
-
-        private class ViewHolder {
-            final CheckBox checkBox;
-            final TextView textView;
-            TaskModel item;
-
-            private ViewHolder(View view) {
-                checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            DeleteItemsTask itemsTask = new DeleteItemsTask();
-                            itemsTask.execute(item);
-                        }
-                    }
-                });
-                textView = (TextView) view.findViewById(R.id.list_item_textview);
-            }
-        }
-
-    }
     private class WriteItemsTask extends AsyncTask<TaskModel, Void, Void> {
 
         @Override
@@ -139,12 +83,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private class DeleteItemsTask extends AsyncTask<TaskModel, Void, Void> {
+    public static class DeleteItemsTask extends AsyncTask<TaskModel, Void, Void> {
+        private SqlRepository repository;
+
+        public DeleteItemsTask(Context context) {
+            repository = new SqlRepository(context);
+        }
 
         @Override
         protected Void doInBackground(TaskModel... params) {
             TaskModel item = params[0];
-            SqlRepository repository = new SqlRepository(getApplicationContext());
             repository.deleteItems(item);
             return null;
         }
