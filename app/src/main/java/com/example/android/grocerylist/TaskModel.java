@@ -7,6 +7,7 @@ public class TaskModel {
 
     private String itemName;
     private int itemId;
+    private Integer remoteId;
 
     public String getItemName() {
         return itemName;
@@ -22,5 +23,13 @@ public class TaskModel {
 
     public void setItemId(int itemId) {
         this.itemId = itemId;
+    }
+
+    public Integer getRemoteId() {
+        return remoteId;
+    }
+
+    public void setRemoteId(Integer remoteId) {
+        this.remoteId = remoteId;
     }
 }

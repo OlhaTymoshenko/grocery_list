@@ -2,14 +2,17 @@ package com.example.android.grocerylist;
 
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -35,6 +38,21 @@ public class MainActivity extends AppCompatActivity
                 new ItemDialogFragment().show(getFragmentManager(), "dialog");
             }
         });
+
+        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        assert refreshLayout != null;
+        refreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+
+                    @Override
+                    public void onRefresh() {
+                        Log.i("LOG_TAG", "onRefresh called from SwipeRefreshLayout");
+                        Intent intent = new Intent(MainActivity.this, ItemsUpdateService.class);
+                        startService(intent);
+
+                    }
+                }
+        );
 
         data = new ArrayList<>();
         adapter = new ItemAdapter(data);
@@ -66,6 +84,8 @@ public class MainActivity extends AppCompatActivity
         this.data = data;
         adapter.setData(data);
         adapter.notifyDataSetChanged();
+        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        refreshLayout.setRefreshing(false);
     }
 
     @Override

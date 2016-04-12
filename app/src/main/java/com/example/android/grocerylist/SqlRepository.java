@@ -54,13 +54,40 @@ public class SqlRepository {
                     (ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME));
             int itemId = cursor.getInt(cursor.getColumnIndexOrThrow
                     (ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_ID));
+            Integer remoteId = null;
+            if (!cursor.isNull(cursor.getColumnIndexOrThrow
+                    (ItemWriterContract.ItemEntry.COLUMN_NAME_REMOTE_ID))) {
+                remoteId = cursor.getInt(cursor.getColumnIndexOrThrow
+                        (ItemWriterContract.ItemEntry.COLUMN_NAME_REMOTE_ID));
+            }
             TaskModel model = new TaskModel();
             model.setItemName(itemName);
             model.setItemId(itemId);
+            model.setRemoteId(remoteId);
             items.add(model);
         }
         cursor.close();
         database.close();
         return items;
+    }
+
+    public void updateItems(ArrayList<TaskModel> taskModels) {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(ItemWriterContract.ItemEntry.COLUMN_ITEM_UPDATED, 0);
+        database.update(ItemWriterContract.ItemEntry.TABLE_NAME, values, null, null);
+        for (int i = 0; i < taskModels.size(); i++) {
+            values.clear();
+            TaskModel model = taskModels.get(i);
+            values.put("item_name", model.getItemName());
+            values.put("remote_id", model.getRemoteId());
+            values.put("updated", 1);
+            database.insertWithOnConflict("items", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        }
+        String selection = ItemWriterContract.ItemEntry.COLUMN_ITEM_UPDATED + " =?";
+        String[] selectionArgs = {String.valueOf(0)};
+        database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, selection, selectionArgs);
+        database.close();
+        EventBus.getDefault().post(new ItemsUpdatedEvent());
     }
 }
