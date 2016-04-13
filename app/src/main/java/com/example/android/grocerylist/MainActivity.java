@@ -20,8 +20,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
         implements ItemDialogFragment.ItemDialogListener,
         LoaderManager.LoaderCallbacks<ArrayList<TaskModel>> {
-    private ArrayList<TaskModel> data;
     private ItemAdapter adapter;
+    private SwipeRefreshLayout refreshLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         assert refreshLayout != null;
         refreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
@@ -54,8 +55,7 @@ public class MainActivity extends AppCompatActivity
                 }
         );
 
-        data = new ArrayList<>();
-        adapter = new ItemAdapter(data);
+        adapter = new ItemAdapter();
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
         assert recyclerView != null;
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -75,16 +75,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public Loader<ArrayList<TaskModel>> onCreateLoader(int id, Bundle args) {
-        ItemsLoader loader = new ItemsLoader(MainActivity.this);
-        return loader;
+        return new ItemsLoader(MainActivity.this);
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<TaskModel>> loader, ArrayList<TaskModel> data) {
-        this.data = data;
         adapter.setData(data);
         adapter.notifyDataSetChanged();
-        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         refreshLayout.setRefreshing(false);
     }
 

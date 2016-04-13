@@ -9,12 +9,13 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lapa on 11.04.16.
  */
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
-    private ArrayList<TaskModel> data;
+    private final List<TaskModel> data = new ArrayList<>();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final CheckBox checkBox;
@@ -38,15 +39,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         }
     }
 
-    public ItemAdapter(ArrayList<TaskModel> data) {
-        this.data = data;
-    }
-
     @Override
     public ItemAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -63,6 +59,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     public void setData(ArrayList<TaskModel> data) {
-        this.data = data;
+        this.data.clear();
+        this.data.addAll(data);
     }
 }
