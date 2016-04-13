@@ -91,8 +91,9 @@ public class SqlRepository {
             values.put("updated", 1);
             database.insertWithOnConflict("items", null, values, SQLiteDatabase.CONFLICT_REPLACE);
         }
-        String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_UPDATED + " =?";
-        String[] selectionArgs = {String.valueOf(0)};
+        String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_UPDATED + " =? AND " +
+                ItemWriterContract.ItemEntry.COLUMN_NAME_IS_NEW + " =?";
+        String[] selectionArgs = {String.valueOf(0), String.valueOf(0)};
         database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, selection, selectionArgs);
         database.close();
         EventBus.getDefault().post(new ItemsUpdatedEvent());
@@ -146,6 +147,7 @@ public class SqlRepository {
                 values,
                 selection,
                 selectionArgs);
+        database.close();
 
     }
 }
