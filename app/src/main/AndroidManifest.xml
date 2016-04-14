@@ -28,6 +28,10 @@
             android:name=".SyncNewService"
             android:exported="false">
         </service>
+        <service
+            android:name=".SyncDeletedService"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>

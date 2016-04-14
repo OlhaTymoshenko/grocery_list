@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by lapa on 04.04.16.
  */
 public class ItemWriterDBHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "ItemWriter.db";
 
     public ItemWriterDBHelper (Context context) {
@@ -22,7 +22,8 @@ public class ItemWriterDBHelper extends SQLiteOpenHelper {
                 ItemWriterContract.ItemEntry.COLUMN_NAME_REMOTE_ID + " INTEGER UNIQUE, " +
                 ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME +" TEXT NOT NULL, " +
                 ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_UPDATED + " INTEGER NOT NULL DEFAULT 0, " +
-                ItemWriterContract.ItemEntry.COLUMN_NAME_IS_NEW + " INTEGER NOT NULL DEFAULT 0);";
+                ItemWriterContract.ItemEntry.COLUMN_NAME_IS_NEW + " INTEGER NOT NULL DEFAULT 0, " +
+                ItemWriterContract.ItemEntry.COLUMN_NAME_IS_DELETED + " INTEGER NOT NULL DEFAULT 0);";
         db.execSQL(SQL_CREATE_ITEMS_TABLE);
     }
 

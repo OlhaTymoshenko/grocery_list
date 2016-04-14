@@ -15,5 +15,6 @@ public final class ItemWriterContract {
         public static final String COLUMN_NAME_ITEM_NAME = "item_name";
         public static final String COLUMN_NAME_ITEM_UPDATED = "updated";
         public static final String COLUMN_NAME_IS_NEW = "is_new";
+        public static final String COLUMN_NAME_IS_DELETED = "is_deleted";
     }
 }
