@@ -38,10 +38,10 @@ public class SyncDeletedService extends IntentService {
         ArrayList<TaskModel> taskModels = repository.findDeletedItems();
         for (TaskModel model : taskModels) {
             int id = model.getRemoteId();
-            Call<TaskDTO> taskDTOCall = service.deleteTask(id);
+            Call<Void> call = service.deleteTask(id);
             try {
-                Response<TaskDTO> taskDTOResponse = taskDTOCall.execute();
-                if (taskDTOResponse.isSuccessful()) {
+                Response<Void> response = call.execute();
+                if (response.isSuccessful()) {
                     SqlRepository sqlRepository = new SqlRepository(getApplicationContext());
                     sqlRepository.setDeletedSynced(model.getItemId());
                 }

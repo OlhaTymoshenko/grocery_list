@@ -25,5 +25,5 @@ public interface APIService {
 
     @Headers("Authorization: Basic dXNlcjE6c2VjcmV0MQ==")
     @DELETE("items/{id}")
-    Call<TaskDTO> deleteTask (@Path("id") int id);
+    Call<Void> deleteTask (@Path("id") int id);
 }
