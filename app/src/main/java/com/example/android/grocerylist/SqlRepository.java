@@ -53,42 +53,6 @@ public class SqlRepository {
         EventBus.getDefault().post(new ItemsUpdatedEvent());
     }
 
-    public ArrayList<TaskModel> findItems() {
-        SQLiteDatabase database = dbHelper.getReadableDatabase();
-        ArrayList<TaskModel> items = new ArrayList<>();
-        String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_IS_DELETED + " =?";
-        String[] selectionArgs = {String.valueOf(0)};
-        Cursor cursor = database.query(
-                ItemWriterContract.ItemEntry.TABLE_NAME,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        while (cursor.moveToNext()) {
-            String itemName = cursor.getString(cursor.getColumnIndexOrThrow
-                    (ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME));
-            int itemId = cursor.getInt(cursor.getColumnIndexOrThrow
-                    (ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_ID));
-            Integer remoteId = null;
-            if (!cursor.isNull(cursor.getColumnIndexOrThrow
-                    (ItemWriterContract.ItemEntry.COLUMN_NAME_REMOTE_ID))) {
-                remoteId = cursor.getInt(cursor.getColumnIndexOrThrow
-                        (ItemWriterContract.ItemEntry.COLUMN_NAME_REMOTE_ID));
-            }
-            TaskModel model = new TaskModel();
-            model.setItemName(itemName);
-            model.setItemId(itemId);
-            model.setRemoteId(remoteId);
-            items.add(model);
-        }
-        cursor.close();
-        database.close();
-        return items;
-    }
-
     public void updateItems(ArrayList<TaskModel> taskModels) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -111,9 +75,27 @@ public class SqlRepository {
         EventBus.getDefault().post(new ItemsUpdatedEvent());
     }
 
+    public ArrayList<TaskModel> findItems() {
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_IS_DELETED + " =?";
+        String[] selectionArgs = {String.valueOf(0)};
+        Cursor cursor = database.query(
+                ItemWriterContract.ItemEntry.TABLE_NAME,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+        ArrayList<TaskModel> taskModels = readItemsFromCursor(cursor);
+        cursor.close();
+        database.close();
+        return taskModels;
+    }
+
     public ArrayList<TaskModel> findNewItems() {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        ArrayList<TaskModel> taskModels = new ArrayList<>();
         String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_IS_NEW + " =?";
         String[] selectionArgs = {String.valueOf(1)};
         Cursor cursor = database.query(
@@ -125,23 +107,7 @@ public class SqlRepository {
                 null,
                 null
         );
-        while (cursor.moveToNext()) {
-            String itemName = cursor.getString(cursor.getColumnIndexOrThrow
-                    (ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME));
-            int itemId = cursor.getInt(cursor.getColumnIndexOrThrow
-                    (ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_ID));
-            Integer remoteId = null;
-            if (!cursor.isNull(cursor.getColumnIndexOrThrow
-                    (ItemWriterContract.ItemEntry.COLUMN_NAME_REMOTE_ID))) {
-                remoteId = cursor.getInt(cursor.getColumnIndexOrThrow
-                        (ItemWriterContract.ItemEntry.COLUMN_NAME_REMOTE_ID));
-            }
-            TaskModel model = new TaskModel();
-            model.setItemName(itemName);
-            model.setItemId(itemId);
-            model.setRemoteId(remoteId);
-            taskModels.add(model);
-        }
+        ArrayList<TaskModel> taskModels = readItemsFromCursor(cursor);
         cursor.close();
         database.close();
         return taskModels;
@@ -149,7 +115,6 @@ public class SqlRepository {
 
     public ArrayList<TaskModel> findDeletedItems() {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        ArrayList<TaskModel> taskModels = new ArrayList<>();
         String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_IS_DELETED + " =?";
         String[] selectionArgs = {String.valueOf(1)};
         Cursor cursor = database.query(
@@ -161,6 +126,14 @@ public class SqlRepository {
                 null,
                 null
         );
+        ArrayList<TaskModel> taskModels = readItemsFromCursor(cursor);
+        cursor.close();
+        database.close();
+        return taskModels;
+    }
+
+    public ArrayList<TaskModel> readItemsFromCursor(Cursor cursor){
+        ArrayList<TaskModel> taskModels = new ArrayList<>();
         while (cursor.moveToNext()) {
             String itemName = cursor.getString(cursor.getColumnIndexOrThrow
                     (ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME));
@@ -178,8 +151,6 @@ public class SqlRepository {
             model.setRemoteId(remoteId);
             taskModels.add(model);
         }
-        cursor.close();
-        database.close();
         return taskModels;
     }
 
