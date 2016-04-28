@@ -80,9 +80,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<ArrayList<TaskModel>> loader, ArrayList<TaskModel> data) {
+        refreshLayout.setRefreshing(false);
         adapter.setData(data);
         adapter.notifyDataSetChanged();
-        refreshLayout.setRefreshing(false);
     }
 
     @Override

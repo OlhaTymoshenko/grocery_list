@@ -44,18 +44,17 @@ public class ItemsUpdateService extends IntentService {
             if (response.isSuccessful()) {
                 List<TaskDTO> taskDTOList = response.body();
                 ArrayList<TaskModel> taskModels = new ArrayList<>();
-                for (int i = 0; i < taskDTOList.size(); i++) {
-                    TaskDTO taskDTO = taskDTOList.get(i);
+                for (TaskDTO taskDTO : taskDTOList) {
                     String name = taskDTO.getName();
                     int id = taskDTO.getId();
                     TaskModel model = new TaskModel();
                     model.setItemName(name);
                     model.setRemoteId(id);
                     taskModels.add(model);
-                    SqlRepository repository = new SqlRepository(getApplicationContext());
-                    repository.updateItems(taskModels);
                 }
-            }
+                SqlRepository repository = new SqlRepository(getApplicationContext());
+                repository.updateItems(taskModels);
+                }
 
         } catch (IOException e) {
             e.printStackTrace();
