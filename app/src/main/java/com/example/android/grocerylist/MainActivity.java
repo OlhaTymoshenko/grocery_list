@@ -14,6 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 
@@ -22,7 +24,6 @@ public class MainActivity extends AppCompatActivity
         LoaderManager.LoaderCallbacks<ArrayList<TaskModel>> {
     private ItemAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,12 @@ public class MainActivity extends AppCompatActivity
                 new ItemDialogFragment().show(getFragmentManager(), "dialog");
             }
         });
+
+        ListView drawerList = (ListView) findViewById(R.id.left_drawer);
+        String[] leftItems = {"Login", "Logout"};
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.drawer_item, R.id.drawer_item_text_view, leftItems);
+        assert drawerList != null;
+        drawerList.setAdapter(arrayAdapter);
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         assert refreshLayout != null;

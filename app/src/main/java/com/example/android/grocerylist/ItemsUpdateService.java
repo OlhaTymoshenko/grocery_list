@@ -54,7 +54,7 @@ public class ItemsUpdateService extends IntentService {
                 }
                 SqlRepository repository = new SqlRepository(getApplicationContext());
                 repository.updateItems(taskModels);
-                }
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
