@@ -7,12 +7,15 @@ import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -24,6 +27,9 @@ public class MainActivity extends AppCompatActivity
         LoaderManager.LoaderCallbacks<ArrayList<TaskModel>> {
     private ItemAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
+    private DrawerLayout drawerLayout;
+    private String activityTitle;
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,12 @@ public class MainActivity extends AppCompatActivity
                 new ItemDialogFragment().show(getFragmentManager(), "dialog");
             }
         });
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        activityTitle = getTitle().toString();
+        setupDrawer();
 
         ListView drawerList = (ListView) findViewById(R.id.left_drawer);
         String[] leftItems = {"Login", "Logout"};
@@ -120,6 +132,40 @@ public class MainActivity extends AppCompatActivity
             repository.deleteItems(item);
             return null;
         }
+    }
+
+    private void setupDrawer() {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("Menu");
+                invalidateOptionsMenu();
+            }
+            @Override
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle(activityTitle);
+                invalidateOptionsMenu();
+            }
+        };
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.addDrawerListener(drawerToggle);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPostCreate (Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
     }
 }
 
