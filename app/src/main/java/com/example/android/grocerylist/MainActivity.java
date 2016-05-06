@@ -7,6 +7,8 @@ import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,8 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,6 @@ public class MainActivity extends AppCompatActivity
     private ItemAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
     private DrawerLayout drawerLayout;
-    private String activityTitle;
     private ActionBarDrawerToggle drawerToggle;
 
     @Override
@@ -37,6 +37,31 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        assert navigationView != null;
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
+
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
+                drawerLayout.closeDrawers();
+                switch (item.getItemId()) {
+                    case R.id.logout:
+                        Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_SHORT).show();
+                        return true;
+                    default:
+                        Toast.makeText(getApplicationContext(), "Something wrong", Toast.LENGTH_SHORT).show();
+                        return true;
+                }
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
@@ -47,17 +72,21 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        activityTitle = getTitle().toString();
-        setupDrawer();
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
 
-        ListView drawerList = (ListView) findViewById(R.id.left_drawer);
-        String[] leftItems = {"Login", "Logout"};
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.drawer_item, R.id.drawer_item_text_view, leftItems);
-        assert drawerList != null;
-        drawerList.setAdapter(arrayAdapter);
+            @Override
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+            }
+        };
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.addDrawerListener(drawerToggle);
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         assert refreshLayout != null;
@@ -89,7 +118,6 @@ public class MainActivity extends AppCompatActivity
         TaskModel model = new TaskModel();
         model.setItemName(item);
         itemsTask.execute(model);
-
     }
 
     @Override
@@ -134,32 +162,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void setupDrawer() {
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-                R.string.drawer_open, R.string.drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("Menu");
-                invalidateOptionsMenu();
-            }
-            @Override
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(activityTitle);
-                invalidateOptionsMenu();
-            }
-        };
-        drawerToggle.setDrawerIndicatorEnabled(true);
-        drawerLayout.addDrawerListener(drawerToggle);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+        drawerLayout.openDrawer(GravityCompat.START);
+        return id == R.id.logout || super.onOptionsItemSelected(item);
     }
 
     @Override

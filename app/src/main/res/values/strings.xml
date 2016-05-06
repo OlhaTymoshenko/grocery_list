@@ -6,4 +6,7 @@
     <string name="cancel_button">Cancel</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name="test_name">Kotte</string>
+    <string name="test_email">kotte@gmail.com</string>
+    <string name="logout">Logout</string>
 </resources>

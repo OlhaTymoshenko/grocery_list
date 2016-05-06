@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/logout"
+        android:checked="false"
+        android:icon="@drawable/ic_exit_to_app_grey600_18dp"
+        android:title="@string/logout"/>
+</menu>
