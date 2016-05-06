@@ -4,7 +4,7 @@
               android:layout_height="wrap_content"
               xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
-              tools:context=".MainActivity$ItemDialogFragment">
+              tools:context=".ItemDialogFragment">
         <EditText
             android:id="@+id/edit_text"
             android:layout_width="match_parent"

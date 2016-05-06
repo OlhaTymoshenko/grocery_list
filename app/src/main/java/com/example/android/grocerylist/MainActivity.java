@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity
                         Log.i("LOG_TAG", "onRefresh called from SwipeRefreshLayout");
                         Intent intent = new Intent(MainActivity.this, ItemsUpdateService.class);
                         startService(intent);
-
                     }
                 }
         );
