@@ -89,9 +89,32 @@ public class LoginActivity extends AppCompatActivity  {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.i(TAG, loginResult.getAccessToken().getToken());
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+                interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+                OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl("http://192.168.1.150:8080/")
+                        .addConverterFactory(ScalarsConverterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create(new Gson()))
+                        .client(client)
+                        .build();
+                APIService service = retrofit.create(APIService.class);
+                Call<String> call = service.signInFb(loginResult.getAccessToken().getToken());
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if (response.isSuccessful()) {
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.d("Error", t.getMessage());
+                    }
+                });
             }
 
             @Override

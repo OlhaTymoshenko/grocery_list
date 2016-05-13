@@ -29,4 +29,7 @@ public interface APIService {
 
     @POST("auth/signin")
     Call<String> signIn (@Body LoginDTO loginDTO);
+
+    @POST("auth/signin-fb")
+    Call<String> signInFb (@Body String token);
 }
