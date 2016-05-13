@@ -17,6 +17,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -201,6 +202,10 @@ public class LoginActivity extends AppCompatActivity  {
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()) {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Wrong email or password", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(intent);
                     }
                 }
