@@ -26,4 +26,7 @@ public interface APIService {
     @Headers("Authorization: Basic dXNlcjE6c2VjcmV0MQ==")
     @DELETE("items/{id}")
     Call<Void> deleteTask (@Path("id") int id);
+
+    @POST("auth/signin")
+    Call<String> signIn (@Body LoginDTO loginDTO);
 }
