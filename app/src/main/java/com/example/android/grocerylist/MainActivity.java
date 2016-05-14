@@ -4,6 +4,8 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +22,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 
 import java.util.ArrayList;
 
@@ -54,7 +59,18 @@ public class MainActivity extends AppCompatActivity
                 drawerLayout.closeDrawers();
                 switch (item.getItemId()) {
                     case R.id.logout:
-                        Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_SHORT).show();
+                        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.remove("token");
+                        editor.apply();
+                        FacebookSdk.sdkInitialize(getApplicationContext());
+                        LoginManager.getInstance().logOut();
+                        ItemWriterDBHelper dbHelper = new ItemWriterDBHelper(getApplicationContext());
+                        SQLiteDatabase database = dbHelper.getWritableDatabase();
+                        database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, null, null);
+                        database.close();
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);
                         return true;
                     default:
                         Toast.makeText(getApplicationContext(), "Something wrong", Toast.LENGTH_SHORT).show();
