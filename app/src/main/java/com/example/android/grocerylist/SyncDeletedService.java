@@ -46,7 +46,7 @@ public class SyncDeletedService extends IntentService {
         }).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.150:8080/")
+                .baseUrl("http://46.101.241.44:8080/")
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .client(client)
                 .build();

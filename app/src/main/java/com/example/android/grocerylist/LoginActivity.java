@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity  {
                     OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
                     Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl("http://192.168.1.150:8080/")
+                            .baseUrl("http://46.101.241.44:8080/")
                             .addConverterFactory(ScalarsConverterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create(new Gson()))
                             .client(client)
@@ -199,7 +199,7 @@ public class LoginActivity extends AppCompatActivity  {
             OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.1.150:8080/")
+                    .baseUrl("http://46.101.241.44:8080/")
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(new Gson()))
                     .client(client)
