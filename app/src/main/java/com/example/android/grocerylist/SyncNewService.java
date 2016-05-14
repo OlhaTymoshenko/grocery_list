@@ -56,7 +56,6 @@ public class SyncNewService extends IntentService {
         for (TaskModel model : taskModels) {
             TaskDTO taskDTO = new TaskDTO();
             taskDTO.setTitle(model.getItemName());
-            taskDTO.setId(null);
             Call<TaskDTO> taskDTOCall = service.createTask(taskDTO);
             try {
                 Response<TaskDTO> taskDTOResponse = taskDTOCall.execute();
