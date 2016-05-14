@@ -5,22 +5,22 @@ package com.example.android.grocerylist;
  */
 public class TaskDTO {
 
-    String name;
-    int id;
+    String title;
+    Integer id;
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 }
