@@ -139,6 +139,16 @@ public class LoginActivity extends AppCompatActivity  {
 
                 }
             });
+
+            Button signUpButton = (Button) findViewById(R.id.email_sign_up_button);
+            assert signUpButton != null;
+            signUpButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
     }
 
