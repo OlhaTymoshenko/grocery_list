@@ -38,7 +38,7 @@ public class SignUpActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("http://46.101.241.44:8080/")
+                        .baseUrl(String.valueOf(R.string.url))
                         .addConverterFactory(ScalarsConverterFactory.create())
                         .addConverterFactory(GsonConverterFactory.create(new Gson()))
                         .client(client)

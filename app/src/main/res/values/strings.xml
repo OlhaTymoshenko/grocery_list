@@ -24,4 +24,5 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="url">http://46.101.241.44:8080/</string>
 </resources>

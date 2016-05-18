@@ -8,14 +8,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -41,21 +43,26 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity  {
-    private static final String TAG = LoginActivity.class.getSimpleName();
+public class LoginActivity extends AppCompatActivity {
     CallbackManager callbackManager;
 
-
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", MODE_PRIVATE);
+        Window window = this.getWindow();
+        window.setStatusBarColor(ContextCompat
+                .getColor(getApplicationContext(), R.color.colorPrimaryDark));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
+        setSupportActionBar(toolbar);
+        SharedPreferences preferences = getApplicationContext()
+                .getSharedPreferences("token", MODE_PRIVATE);
         if (preferences.contains("token")) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
@@ -64,8 +71,7 @@ public class LoginActivity extends AppCompatActivity  {
             callbackManager = CallbackManager.Factory.create();
             setContentView(R.layout.activity_login);
             // Set up the login form.
-            mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-
+            mEmailView = (EditText) findViewById(R.id.email);
             mPasswordView = (EditText) findViewById(R.id.password);
             mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
@@ -77,7 +83,6 @@ public class LoginActivity extends AppCompatActivity  {
                     return false;
                 }
             });
-
             Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
             assert mEmailSignInButton != null;
             mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -96,28 +101,15 @@ public class LoginActivity extends AppCompatActivity  {
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-                    interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-                    OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl("http://46.101.241.44:8080/")
-                            .addConverterFactory(ScalarsConverterFactory.create())
-                            .addConverterFactory(GsonConverterFactory.create(new Gson()))
-                            .client(client)
-                            .build();
-                    APIService service = retrofit.create(APIService.class);
+                    APIService service = buildRequest();
                     Call<String> call = service.signInFb(loginResult.getAccessToken().getToken());
                     call.enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
                             if (response.isSuccessful()) {
-                                String token = response.body();
-                                SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("token", token);
-                                editor.apply();
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                saveToken(response);
+                                Intent intent = new Intent(getApplicationContext(),
+                                        MainActivity.class);
                                 startActivity(intent);
                             }
                         }
@@ -157,14 +149,13 @@ public class LoginActivity extends AppCompatActivity  {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
+
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -202,35 +193,21 @@ public class LoginActivity extends AppCompatActivity  {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-
-            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://46.101.241.44:8080/")
-                    .addConverterFactory(ScalarsConverterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create(new Gson()))
-                    .client(client)
-                    .build();
-            APIService service = retrofit.create(APIService.class);
             LoginDTO loginDTO = new LoginDTO();
             loginDTO.setEmail(email);
             loginDTO.setPassword(password);
+            APIService service = buildRequest();
             Call<String> call = service.signIn(loginDTO);
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()) {
-                        String token = response.body();
-                        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("token", token);
-                        editor.apply();
+                        saveToken(response);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(getApplicationContext(), "Wrong email or password", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Wrong email or password", Toast
+                                .LENGTH_LONG).show();
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(intent);
                     }
@@ -250,6 +227,28 @@ public class LoginActivity extends AppCompatActivity  {
 
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
+    }
+
+    private APIService buildRequest() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(String.valueOf(R.string.url))
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(new Gson()))
+                .client(client)
+                .build();
+        return retrofit.create(APIService.class);
+    }
+
+    private void saveToken(Response<String> response) {
+        String token = response.body();
+        SharedPreferences preferences = getApplicationContext()
+                .getSharedPreferences("token", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("token", token);
+        editor.apply();
     }
 
     /**
