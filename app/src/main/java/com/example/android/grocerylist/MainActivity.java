@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity
                         database.close();
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(intent);
+                        finish();
                         return true;
                     default:
                         Toast.makeText(getApplicationContext(), "Something wrong", Toast.LENGTH_SHORT).show();

@@ -49,7 +49,7 @@ public class ItemsUpdateService extends IntentService {
         }).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(String.valueOf(R.string.url))
+                .baseUrl(getString(R.string.url))
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .client(client)
                 .build();

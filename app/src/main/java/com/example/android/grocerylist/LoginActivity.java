@@ -111,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(getApplicationContext(),
                                         MainActivity.class);
                                 startActivity(intent);
+                                finish();
                             }
                         }
 
@@ -205,11 +206,11 @@ public class LoginActivity extends AppCompatActivity {
                         saveToken(response);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
+                        finish();
                     } else {
                         Toast.makeText(getApplicationContext(), "Wrong email or password", Toast
                                 .LENGTH_LONG).show();
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(intent);
+                        showProgress(false);
                     }
                 }
 
@@ -234,7 +235,7 @@ public class LoginActivity extends AppCompatActivity {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(String.valueOf(R.string.url))
+                .baseUrl(getString(R.string.url))
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .client(client)
