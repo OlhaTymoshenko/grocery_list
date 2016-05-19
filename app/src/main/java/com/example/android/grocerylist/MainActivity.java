@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -44,10 +43,17 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new ItemDialogFragment().show(getFragmentManager(), "dialog");
+            }
+        });
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         assert navigationView != null;
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -59,19 +65,7 @@ public class MainActivity extends AppCompatActivity
                 drawerLayout.closeDrawers();
                 switch (item.getItemId()) {
                     case R.id.logout:
-                        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.remove("token");
-                        editor.apply();
-                        FacebookSdk.sdkInitialize(getApplicationContext());
-                        LoginManager.getInstance().logOut();
-                        ItemWriterDBHelper dbHelper = new ItemWriterDBHelper(getApplicationContext());
-                        SQLiteDatabase database = dbHelper.getWritableDatabase();
-                        database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, null, null);
-                        database.close();
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(intent);
-                        finish();
+                        logout();
                         return true;
                     default:
                         Toast.makeText(getApplicationContext(), "Something wrong", Toast.LENGTH_SHORT).show();
@@ -79,16 +73,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new ItemDialogFragment().show(getFragmentManager(), "dialog");
-            }
-        });
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
@@ -104,7 +88,6 @@ public class MainActivity extends AppCompatActivity
         };
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayout.addDrawerListener(drawerToggle);
-
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         assert refreshLayout != null;
         refreshLayout.setOnRefreshListener(
@@ -118,7 +101,8 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
         );
-
+        Intent intent = new Intent(MainActivity.this, ItemsUpdateService.class);
+        startService(intent);
         adapter = new ItemAdapter();
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
         assert recyclerView != null;
@@ -128,12 +112,18 @@ public class MainActivity extends AppCompatActivity
         getLoaderManager().initLoader(0, null, this);
     }
 
-    @Override
-    public void onOKButtonClick(String item) {
-        WriteItemsTask itemsTask = new WriteItemsTask();
-        TaskModel model = new TaskModel();
-        model.setItemName(item);
-        itemsTask.execute(model);
+    private void logout() {
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("token");
+        editor.apply();
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        LoginManager.getInstance().logOut();
+        SqlRepository repository = new SqlRepository(getApplicationContext());
+        repository.logout();
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -150,6 +140,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<ArrayList<TaskModel>> loader) {
+    }
+
+    @Override
+    public void onOKButtonClick(String item) {
+        WriteItemsTask itemsTask = new WriteItemsTask();
+        TaskModel model = new TaskModel();
+        model.setItemName(item);
+        itemsTask.execute(model);
     }
 
     private class WriteItemsTask extends AsyncTask<TaskModel, Void, Void> {
@@ -186,7 +184,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onPostCreate (Bundle savedInstanceState) {
+    protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
     }

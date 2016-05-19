@@ -22,7 +22,6 @@ public class SqlRepository {
         this.context = context;
     }
 
-
     public void addItems(TaskModel item) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -175,6 +174,12 @@ public class SqlRepository {
         String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_ID + " =?";
         String[] selectionArgs = {String.valueOf(itemId)};
         database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, selection, selectionArgs);
+        database.close();
+    }
+
+    public void logout() {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, null, null);
         database.close();
     }
 }

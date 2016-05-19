@@ -36,7 +36,6 @@ public class SignUpActivity extends AppCompatActivity {
                 HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
                 interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
                 OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(getString(R.string.url))
                         .addConverterFactory(ScalarsConverterFactory.create())
@@ -62,16 +61,16 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onResponse(Call<String> call, Response<String> response) {
                         if (response.isSuccessful()) {
                             String token = response.body();
-                            SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", Context.MODE_PRIVATE);
+                            SharedPreferences preferences = getApplicationContext()
+                                    .getSharedPreferences("token", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.putString("token", token);
                             editor.apply();
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
+                            finish();
                         } else {
                             Toast.makeText(getApplicationContext(), "Try again", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
-                            startActivity(intent);
                         }
                     }
 
