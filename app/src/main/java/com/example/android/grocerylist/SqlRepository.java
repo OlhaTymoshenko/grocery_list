@@ -180,6 +180,45 @@ public class SqlRepository {
     public void logout() {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, null, null);
+        database.delete(ItemWriterContract.UserEntry.TABLE_NAME, null, null);
         database.close();
+    }
+
+    public void updateUserData(UserModel userModel) {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(ItemWriterContract.UserEntry.COLUMN_NAME_USER_NAME, userModel.getUserName());
+        values.put(ItemWriterContract.UserEntry.COLUMN_NAME_USER_EMAIL, userModel.getUserEmail());
+        database.insert(ItemWriterContract.UserEntry.TABLE_NAME, null, values);
+        database.close();
+        EventBus.getDefault().post(new UserDataUpdatedEvent());
+    }
+
+    public UserModel findUserData() {
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor cursor = database.query(
+                ItemWriterContract.UserEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        if (cursor.moveToNext()) {
+            String userName = cursor.getString(cursor
+                    .getColumnIndexOrThrow(ItemWriterContract.UserEntry.COLUMN_NAME_USER_NAME));
+            String userEmail = cursor.getString(cursor
+                    .getColumnIndexOrThrow(ItemWriterContract.UserEntry.COLUMN_NAME_USER_EMAIL));
+            UserModel userModel = new UserModel();
+            userModel.setUserName(userName);
+            userModel.setUserEmail(userEmail);
+            cursor.close();
+            database.close();
+            return userModel;
+        } else {
+            return null;
+        }
+
     }
 }

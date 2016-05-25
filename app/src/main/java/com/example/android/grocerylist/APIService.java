@@ -31,4 +31,7 @@ public interface APIService {
 
     @POST("auth/signup")
     Call<String> signUp (@Body SignUpDTO signUpDTO);
+
+    @GET("user")
+    Call<UserDTO> userData();
 }

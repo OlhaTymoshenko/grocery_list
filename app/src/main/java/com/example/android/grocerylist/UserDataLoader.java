@@ -6,21 +6,18 @@ import android.content.Context;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
-
 /**
- * Created by lapa on 06.04.16.
+ * Created by lapa on 20.05.16.
  */
-public class ItemsLoader extends AsyncTaskLoader<ArrayList<TaskModel>> {
-
-    public ItemsLoader(Context context) {
+public class UserDataLoader extends AsyncTaskLoader<UserModel> {
+    public UserDataLoader(Context context) {
         super(context);
     }
 
     @Override
-    public ArrayList<TaskModel> loadInBackground() {
+    public UserModel loadInBackground() {
         SqlRepository repository = new SqlRepository(getContext());
-        return repository.findItems();
+        return repository.findUserData();
     }
 
     @Override
@@ -37,7 +34,7 @@ public class ItemsLoader extends AsyncTaskLoader<ArrayList<TaskModel>> {
     }
 
     @Subscribe
-    public void onItemsUpdatedEvent(ItemsUpdatedEvent event) {
+    public void onUserDataUpdatedEvent (UserDataUpdatedEvent userDataUpdatedEvent) {
         forceLoad();
     }
 }

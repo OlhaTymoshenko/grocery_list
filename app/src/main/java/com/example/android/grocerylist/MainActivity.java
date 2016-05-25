@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
@@ -28,8 +29,9 @@ import com.facebook.login.LoginManager;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements ItemDialogFragment.ItemDialogListener,
-        LoaderManager.LoaderCallbacks<ArrayList<TaskModel>> {
+        implements ItemDialogFragment.ItemDialogListener {
+    private static final int ARRAY_LIST_LOADER_ID = 1;
+    private static final int USER_MODEL_LOADER_ID = 2;
     private ItemAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
     private DrawerLayout drawerLayout;
@@ -88,6 +90,31 @@ public class MainActivity extends AppCompatActivity
         };
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayout.addDrawerListener(drawerToggle);
+        Intent intent1 = new Intent(MainActivity.this, UserDataLoadService.class);
+        startService(intent1);
+        getLoaderManager().initLoader(USER_MODEL_LOADER_ID, null, new LoaderManager.LoaderCallbacks<UserModel>() {
+            @Override
+            public Loader<UserModel> onCreateLoader(int id, Bundle args) {
+                return new UserDataLoader(MainActivity.this);
+            }
+
+            @Override
+            public void onLoadFinished(Loader<UserModel> loader, UserModel data) {
+                if (data != null) {
+                    TextView textViewName = (TextView) findViewById(R.id.user_name);
+                    assert textViewName != null;
+                    textViewName.setText(data.getUserName());
+                    TextView textViewEmail = (TextView) findViewById(R.id.user_email);
+                    assert textViewEmail != null;
+                    textViewEmail.setText(data.getUserEmail());
+                }
+            }
+
+            @Override
+            public void onLoaderReset(Loader<UserModel> loader) {
+
+            }
+        });
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         assert refreshLayout != null;
         refreshLayout.setOnRefreshListener(
@@ -109,7 +136,24 @@ public class MainActivity extends AppCompatActivity
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(ARRAY_LIST_LOADER_ID, null, new LoaderManager.LoaderCallbacks<ArrayList<TaskModel>>() {
+            @Override
+            public Loader<ArrayList<TaskModel>> onCreateLoader(int id, Bundle args) {
+                return new ItemsLoader(MainActivity.this);
+            }
+
+            @Override
+            public void onLoadFinished(Loader<ArrayList<TaskModel>> loader, ArrayList<TaskModel> data) {
+                refreshLayout.setRefreshing(false);
+                adapter.setData(data);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onLoaderReset(Loader<ArrayList<TaskModel>> loader) {
+
+            }
+        });
     }
 
     private void logout() {
@@ -124,22 +168,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    @Override
-    public Loader<ArrayList<TaskModel>> onCreateLoader(int id, Bundle args) {
-        return new ItemsLoader(MainActivity.this);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<ArrayList<TaskModel>> loader, ArrayList<TaskModel> data) {
-        refreshLayout.setRefreshing(false);
-        adapter.setData(data);
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ArrayList<TaskModel>> loader) {
     }
 
     @Override

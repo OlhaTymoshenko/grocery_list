@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by lapa on 04.04.16.
  */
 public class ItemWriterDBHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 8;
+    public static final int DATABASE_VERSION = 12;
     public static final String DATABASE_NAME = "ItemWriter.db";
 
     public ItemWriterDBHelper (Context context) {
@@ -25,11 +25,16 @@ public class ItemWriterDBHelper extends SQLiteOpenHelper {
                 ItemWriterContract.ItemEntry.COLUMN_NAME_IS_NEW + " INTEGER NOT NULL DEFAULT 0, " +
                 ItemWriterContract.ItemEntry.COLUMN_NAME_IS_DELETED + " INTEGER NOT NULL DEFAULT 0);";
         db.execSQL(SQL_CREATE_ITEMS_TABLE);
+        final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + ItemWriterContract.UserEntry.TABLE_NAME + " (" +
+                ItemWriterContract.UserEntry.COLUMN_NAME_USER_NAME + " TEXT NOT NULL, " +
+                ItemWriterContract.UserEntry.COLUMN_NAME_USER_EMAIL + " TEXT NOT NULL);";
+        db.execSQL(SQL_CREATE_USER_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + ItemWriterContract.ItemEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + ItemWriterContract.UserEntry.TABLE_NAME);
         onCreate(db);
     }
 }

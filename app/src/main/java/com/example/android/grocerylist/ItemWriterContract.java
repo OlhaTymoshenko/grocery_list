@@ -17,4 +17,10 @@ public final class ItemWriterContract {
         public static final String COLUMN_NAME_IS_NEW = "is_new";
         public static final String COLUMN_NAME_IS_DELETED = "is_deleted";
     }
+
+    public static abstract class UserEntry implements BaseColumns {
+        public static final String TABLE_NAME = "user";
+        public static final String COLUMN_NAME_USER_NAME = "user_name";
+        public static final String COLUMN_NAME_USER_EMAIL = "user_email";
+    }
 }
