@@ -23,7 +23,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 
 import java.util.ArrayList;
@@ -161,7 +160,6 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("token");
         editor.apply();
-        FacebookSdk.sdkInitialize(getApplicationContext());
         LoginManager.getInstance().logOut();
         SqlRepository repository = new SqlRepository(getApplicationContext());
         repository.logout();
