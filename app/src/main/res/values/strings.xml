@@ -25,4 +25,7 @@
         completions."
     </string>
     <string name="url">http://46.101.241.44:8080/</string>
+    <string name="take_picture">Take new picture</string>
+    <string name="select_picture">Select new from gallery</string>
+    <string name="remove_picture">Remove photo</string>
 </resources>

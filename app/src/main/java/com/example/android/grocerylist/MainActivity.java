@@ -27,6 +27,8 @@ import com.facebook.login.LoginManager;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity
         implements ItemDialogFragment.ItemDialogListener {
     private static final int ARRAY_LIST_LOADER_ID = 1;
@@ -89,8 +91,8 @@ public class MainActivity extends AppCompatActivity
         };
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayout.addDrawerListener(drawerToggle);
-        Intent intent1 = new Intent(MainActivity.this, UserDataLoadService.class);
-        startService(intent1);
+        Intent serviceIntent = new Intent(MainActivity.this, UserDataLoadService.class);
+        startService(serviceIntent);
         getLoaderManager().initLoader(USER_MODEL_LOADER_ID, null, new LoaderManager.LoaderCallbacks<UserModel>() {
             @Override
             public Loader<UserModel> onCreateLoader(int id, Bundle args) {
@@ -112,6 +114,15 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onLoaderReset(Loader<UserModel> loader) {
 
+            }
+        });
+        CircleImageView circleImageView = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.profile_image);
+        assert circleImageView != null;
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, UserPhotoActivity.class);
+                startActivity(intent);
             }
         });
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
