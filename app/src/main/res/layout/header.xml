@@ -4,18 +4,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="190dp"
                 android:background="@color/colorLeft">
+
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_image"
         android:layout_width="76dp"
         android:layout_height="76dp"
         app:border_color="#FF000000"
-        android:src="@drawable/photo"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:background="@layout/shape"
+        android:src="@drawable/ic_account_circle_grey600_36dp"/>
     <TextView
         android:id="@+id/user_name"
         android:layout_width="wrap_content"

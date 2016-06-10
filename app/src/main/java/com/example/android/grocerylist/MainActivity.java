@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity
                 new ItemDialogFragment().show(getFragmentManager(), "dialog");
             }
         });
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
@@ -102,10 +102,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onLoadFinished(Loader<UserModel> loader, UserModel data) {
                 if (data != null) {
-                    TextView textViewName = (TextView) findViewById(R.id.user_name);
+                    TextView textViewName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
                     assert textViewName != null;
                     textViewName.setText(data.getUserName());
-                    TextView textViewEmail = (TextView) findViewById(R.id.user_email);
+                    TextView textViewEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
                     assert textViewEmail != null;
                     textViewEmail.setText(data.getUserEmail());
                 }
