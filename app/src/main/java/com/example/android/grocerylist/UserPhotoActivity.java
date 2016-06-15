@@ -18,32 +18,45 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class UserPhotoActivity extends AppCompatActivity {
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_IMAGE_CAPTURE = 0;
     private String currentPhotoPath;
     static final int MY_PERMISSIONS_REQUEST = 1;
+    static final int PICK_IMAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_photo);
-        TextView textView = (TextView) findViewById(R.id.take_picture_text_view);
-        assert textView != null;
-        textView.setOnClickListener(new View.OnClickListener() {
+        TextView textViewTakePicture = (TextView) findViewById(R.id.take_picture_text_view);
+        assert textViewTakePicture != null;
+        textViewTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if ((ContextCompat.checkSelfPermission(getApplicationContext(),
-                        android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) ||
+                        android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) &&
                         (ContextCompat.checkSelfPermission(getApplicationContext(),
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)){
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+                    takePicture();
+                } else {
                     ActivityCompat.requestPermissions(UserPhotoActivity.this,
                             new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST);
                 }
+            }
+        });
+        TextView textViewSelectPicture = (TextView) findViewById(R.id.select_picture_text_view);
+        assert textViewSelectPicture != null;
+        textViewSelectPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectPicture();
             }
         });
     }
@@ -58,28 +71,51 @@ public class UserPhotoActivity extends AppCompatActivity {
                 imageView.setImageBitmap(bitmap);
             }
         }
+        if (requestCode == PICK_IMAGE) {
+            if (resultCode == RESULT_OK && data != null) {
+                Uri uri = data.getData();
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(uri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    ImageView imageView = (ImageView) findViewById(R.id.user_photo);
+                    assert imageView != null;
+                    imageView.setImageBitmap(bitmap);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                File photoFile = null;
-                try {
-                    photoFile = createImageFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (photoFile != null) {
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
-
-            }
+            takePicture();
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void takePicture() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private void selectPicture() {
+        Intent selectPictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        selectPictureIntent.setType("image/*");
+        startActivityForResult(Intent.createChooser(selectPictureIntent, "Select picture"), PICK_IMAGE);
     }
 
     private File createImageFile() throws IOException {
