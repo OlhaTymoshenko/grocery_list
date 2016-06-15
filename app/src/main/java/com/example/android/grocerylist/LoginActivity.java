@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window window = this.getWindow();
+        Window window = getWindow();
         window.setStatusBarColor(ContextCompat
                 .getColor(getApplicationContext(), R.color.colorPrimaryDark));
         Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
@@ -65,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         if (preferences.contains("token")) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
+            finish();
         } else {
             callbackManager = CallbackManager.Factory.create();
             setContentView(R.layout.activity_login);

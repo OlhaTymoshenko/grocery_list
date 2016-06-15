@@ -20,7 +20,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final CheckBox checkBox;
         final TextView textView;
-        TaskModel item;
+        TaskModel taskModel;
 
         public ViewHolder(View view) {
             super(view);
@@ -31,7 +31,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     if (isChecked) {
                         MainActivity.DeleteItemsTask itemsTask = new MainActivity.DeleteItemsTask
                                 (buttonView.getContext().getApplicationContext());
-                        itemsTask.execute(item);
+                        itemsTask.execute(taskModel);
                     }
                 }
             });
@@ -47,10 +47,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ItemAdapter.ViewHolder holder, int position) {
-        TaskModel item = data.get(position);
-        holder.textView.setText(item.getItemName());
+        TaskModel model = data.get(position);
+        holder.textView.setText(model.getItemName());
         holder.checkBox.setChecked(false);
-        holder.item = item;
+        holder.taskModel = model;
     }
 
     @Override
