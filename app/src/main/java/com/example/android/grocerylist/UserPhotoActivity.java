@@ -59,6 +59,14 @@ public class UserPhotoActivity extends AppCompatActivity {
                 selectPicture();
             }
         });
+        TextView textViewRemovePicture = (TextView) findViewById(R.id.remove_picture_text_view);
+        assert textViewRemovePicture != null;
+        textViewRemovePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removePicture();
+            }
+        });
     }
 
     @Override
@@ -116,6 +124,12 @@ public class UserPhotoActivity extends AppCompatActivity {
         Intent selectPictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
         selectPictureIntent.setType("image/*");
         startActivityForResult(Intent.createChooser(selectPictureIntent, "Select picture"), PICK_IMAGE);
+    }
+
+    private void removePicture() {
+        ImageView imageView = (ImageView) findViewById(R.id.user_photo);
+        assert imageView != null;
+        imageView.setImageResource(R.drawable.ic_account_circle_grey600_48dp);
     }
 
     private File createImageFile() throws IOException {
