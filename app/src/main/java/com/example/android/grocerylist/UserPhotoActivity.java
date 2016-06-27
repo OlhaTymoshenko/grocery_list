@@ -2,9 +2,11 @@ package com.example.android.grocerylist;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,21 +15,41 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class UserPhotoActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 0;
     private String currentPhotoPath;
+    private String currentPhotoName;
+    private File image;
     static final int MY_PERMISSIONS_REQUEST = 1;
     static final int PICK_IMAGE = 1;
 
@@ -59,12 +81,13 @@ public class UserPhotoActivity extends AppCompatActivity {
                 selectPicture();
             }
         });
-        TextView textViewRemovePicture = (TextView) findViewById(R.id.remove_picture_text_view);
-        assert textViewRemovePicture != null;
-        textViewRemovePicture.setOnClickListener(new View.OnClickListener() {
+        TextView textViewDone = (TextView) findViewById(R.id.done_text_view);
+        assert textViewDone != null;
+        textViewDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removePicture();
+                postPicture();
+                finish();
             }
         });
     }
@@ -88,6 +111,20 @@ public class UserPhotoActivity extends AppCompatActivity {
                     ImageView imageView = (ImageView) findViewById(R.id.user_photo);
                     assert imageView != null;
                     imageView.setImageBitmap(bitmap);
+                    try {
+                        File photo = createImageFile();
+                        OutputStream outputStream = new FileOutputStream(photo);
+                        byte[] buf = new byte[1024];
+                        int len;
+                        assert inputStream != null;
+                        while ((len = inputStream.read(buf)) > 0) {
+                            outputStream.write(buf, 0, len);
+                        }
+                        outputStream.close();
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -126,18 +163,55 @@ public class UserPhotoActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(selectPictureIntent, "Select picture"), PICK_IMAGE);
     }
 
-    private void removePicture() {
-        ImageView imageView = (ImageView) findViewById(R.id.user_photo);
-        assert imageView != null;
-        imageView.setImageResource(R.drawable.ic_account_circle_grey600_48dp);
+    private void postPicture() {
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", MODE_PRIVATE);
+        final String token = preferences.getString("token", null);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request original = chain.request();
+                        Request.Builder builder = original
+                                .newBuilder()
+                                .header("X-AUTH-TOKEN", token)
+                                .method(original.method(), original.body());
+                        Request request = builder.build();
+                        return chain.proceed(request);
+                    }
+                })
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(getString(R.string.url))
+                .addConverterFactory(GsonConverterFactory.create(new Gson()))
+                .client(client)
+                .build();
+        APIService service = retrofit.create(APIService.class);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("avatar", currentPhotoName,
+                RequestBody.create(MediaType.parse("multipart/form-data"), image));
+        Call<Image> imageCall = service.userAvatar(part);
+        imageCall.enqueue(new Callback<Image>() {
+            @Override
+            public void onResponse(Call<Image> call, retrofit2.Response<Image> response) {
+                Log.v("Upload", "success");
+            }
+
+            @Override
+            public void onFailure(Call<Image> call, Throwable t) {
+                Log.e("Upload error:", t.getMessage());
+            }
+        });
     }
 
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        image = File.createTempFile(imageFileName, ".jpg", storageDir);
         currentPhotoPath = image.getAbsolutePath();
+        currentPhotoName = image.getName();
         return image;
     }
 }

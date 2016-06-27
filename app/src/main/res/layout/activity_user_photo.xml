@@ -41,10 +41,10 @@
         android:paddingBottom="8dp"
         android:background="?android:attr/selectableItemBackground"/>
     <TextView
-        android:id="@+id/remove_picture_text_view"
+        android:id="@+id/done_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/remove_picture"
+        android:text="@string/done"
         android:textSize="20sp"
         android:textColor="@color/colorText"
         android:paddingTop="8dp"
