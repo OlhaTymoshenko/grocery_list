@@ -25,10 +25,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.jakewharton.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public class MainActivity extends AppCompatActivity
         implements ItemDialogFragment.ItemDialogListener {
@@ -119,6 +127,8 @@ public class MainActivity extends AppCompatActivity
         });
         CircleImageView circleImageView = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.profile_image);
         assert circleImageView != null;
+        Picasso picasso = getPicture();
+        picasso.load(getString(R.string.picasso_url)).into(circleImageView);
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -235,6 +245,30 @@ public class MainActivity extends AppCompatActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
+    }
+
+    private Picasso getPicture() {
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", MODE_PRIVATE);
+        final String token = preferences.getString("token", null);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request().newBuilder()
+                                .addHeader("X-AUTH-TOKEN", token)
+                                .build();
+                        return chain.proceed(request);
+                    }
+                })
+                .addInterceptor(interceptor)
+                .build();
+
+        return new Picasso.Builder(getApplicationContext())
+                .downloader(new OkHttp3Downloader(client))
+                .loggingEnabled(true)
+                .build();
     }
 }
 

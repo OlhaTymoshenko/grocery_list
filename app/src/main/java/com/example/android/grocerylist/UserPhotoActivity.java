@@ -51,7 +51,6 @@ public class UserPhotoActivity extends AppCompatActivity {
         ImageView imageView = (ImageView) findViewById(R.id.user_photo);
         Picasso picasso = getPicture();
         picasso.load(getString(R.string.picasso_url)).into(imageView);
-
         TextView textViewTakePicture = (TextView) findViewById(R.id.take_picture_text_view);
         assert textViewTakePicture != null;
         textViewTakePicture.setOnClickListener(new View.OnClickListener() {
