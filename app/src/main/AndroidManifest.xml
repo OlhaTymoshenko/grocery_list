@@ -55,6 +55,9 @@
             android:name=".UserDataLoadService"
             android:exported="false">
         </service>
+        <service android:name=".FileUploadService"
+                 android:exported="false">
+        </service>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
