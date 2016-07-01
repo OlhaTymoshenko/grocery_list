@@ -79,9 +79,11 @@ public class UserPhotoActivity extends AppCompatActivity {
         textViewDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent serviceIntent = new Intent(UserPhotoActivity.this, FileUploadService.class);
-                serviceIntent.putExtra("image", image);
-                startService(serviceIntent);
+                if (image != null) {
+                    Intent serviceIntent = new Intent(UserPhotoActivity.this, FileUploadService.class);
+                    serviceIntent.putExtra("image", image);
+                    startService(serviceIntent);
+                }
                 finish();
             }
         });
