@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Image;
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -59,7 +60,7 @@ public class FileUploadService extends IntentService {
                 .client(client)
                 .build();
         APIService service = retrofit.create(APIService.class);
-        File file = (File) intent.getExtras().getSerializable("image");
+        final File file = (File) intent.getExtras().getSerializable("image");
         assert file != null;
         MultipartBody.Part part = MultipartBody.Part.createFormData("avatar", file.getName(),
                 RequestBody.create(MediaType.parse("multipart/form-data"), file));
@@ -73,7 +74,11 @@ public class FileUploadService extends IntentService {
             @Override
             public void onFailure(Call<Image> call, Throwable t) {
                 Log.e("Upload error:", t.getMessage());
+                File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                File image = new File(storageDir, file.getName());
+                boolean deleted = image.delete();
             }
         });
+
     }
 }

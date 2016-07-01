@@ -22,7 +22,6 @@ import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -104,6 +103,7 @@ public class UserPhotoActivity extends AppCompatActivity {
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(uri);
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    assert inputStream != null;
                     inputStream.close();
                     ImageView imageView = (ImageView) findViewById(R.id.user_photo);
                     assert imageView != null;
@@ -114,6 +114,7 @@ public class UserPhotoActivity extends AppCompatActivity {
                         byte[] buf = new byte[1024*1024];
                         int len;
                         inputStream = getContentResolver().openInputStream(uri);
+                        assert inputStream != null;
                         while ((len = inputStream.read(buf)) > 0) {
                             outputStream.write(buf, 0, len);
                         }
@@ -122,10 +123,7 @@ public class UserPhotoActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                 catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
