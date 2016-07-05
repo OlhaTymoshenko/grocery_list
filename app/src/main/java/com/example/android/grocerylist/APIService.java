@@ -1,10 +1,9 @@
 package com.example.android.grocerylist;
 
-import android.media.Image;
-
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -42,5 +41,5 @@ public interface APIService {
 
     @Multipart
     @POST("user/avatar")
-    Call<Image> userAvatar (@Part MultipartBody.Part avatar);
+    Call<ResponseBody> userAvatar (@Part MultipartBody.Part avatar);
 }

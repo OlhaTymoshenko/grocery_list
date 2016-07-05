@@ -102,32 +102,25 @@ public class UserPhotoActivity extends AppCompatActivity {
         if (requestCode == PICK_IMAGE) {
             if (resultCode == RESULT_OK && data != null) {
                 Uri uri = data.getData();
+                File photo = null;
                 try {
+                    photo = createImageFile();
+                    OutputStream outputStream = new FileOutputStream(photo);
+                    byte[] buf = new byte[1024*1024];
+                    int len;
                     InputStream inputStream = getContentResolver().openInputStream(uri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     assert inputStream != null;
-                    inputStream.close();
-                    ImageView imageView = (ImageView) findViewById(R.id.user_photo);
-                    assert imageView != null;
-                    imageView.setImageBitmap(bitmap);
-                    try {
-                        File photo = createImageFile();
-                        OutputStream outputStream = new FileOutputStream(photo);
-                        byte[] buf = new byte[1024*1024];
-                        int len;
-                        inputStream = getContentResolver().openInputStream(uri);
-                        assert inputStream != null;
-                        while ((len = inputStream.read(buf)) > 0) {
-                            outputStream.write(buf, 0, len);
-                        }
-                        outputStream.close();
-                        inputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    while ((len = inputStream.read(buf)) > 0) {
+                        outputStream.write(buf, 0, len);
                     }
+                    outputStream.close();
+                    inputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                ImageView imageView = (ImageView) findViewById(R.id.user_photo);
+                imageView.setImageBitmap(decodeSampledBitmapFromFile(photo, imageView.getWidth(), imageView.getHeight()));
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -194,5 +187,32 @@ public class UserPhotoActivity extends AppCompatActivity {
         image = File.createTempFile(imageFileName, ".jpg", storageDir);
         currentPhotoPath = image.getAbsolutePath();
         return image;
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public static Bitmap decodeSampledBitmapFromFile(File imageFile, int reqWidth, int reqHeight) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imageFile.getPath(), options);
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(imageFile.getPath(), options);
     }
 }

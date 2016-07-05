@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +32,6 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity
     private SwipeRefreshLayout refreshLayout;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
+    private ImageView circleImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,10 +126,7 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-        CircleImageView circleImageView = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.profile_image);
-        assert circleImageView != null;
-        Picasso picasso = getPicture();
-        picasso.load(getString(R.string.picasso_url)).into(circleImageView);
+        circleImageView = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.profile_image);
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,6 +173,17 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        reloadAvatar();
+    }
+
+    private void reloadAvatar() {
+        Picasso picasso = getPicture();
+        picasso.load(getString(R.string.picasso_url)).into(circleImageView);
     }
 
     @Override

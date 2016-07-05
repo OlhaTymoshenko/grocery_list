@@ -3,7 +3,6 @@ package com.example.android.grocerylist;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.Environment;
 import android.util.Log;
 
@@ -19,6 +18,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,19 +64,19 @@ public class FileUploadService extends IntentService {
         assert file != null;
         MultipartBody.Part part = MultipartBody.Part.createFormData("avatar", file.getName(),
                 RequestBody.create(MediaType.parse("multipart/form-data"), file));
-        Call<Image> imageCall = service.userAvatar(part);
-        imageCall.enqueue(new Callback<Image>() {
+        Call<ResponseBody> imageCall = service.userAvatar(part);
+        imageCall.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<Image> call, retrofit2.Response<Image> response) {
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 Log.v("Upload", "success");
-            }
-
-            @Override
-            public void onFailure(Call<Image> call, Throwable t) {
-                Log.e("Upload error:", t.getMessage());
                 File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
                 File image = new File(storageDir, file.getName());
                 boolean deleted = image.delete();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("TAG", "Upload error:", t);
             }
         });
 
