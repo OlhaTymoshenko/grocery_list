@@ -24,12 +24,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class SignUpActivity extends AppCompatActivity {
-
+    private String email;
+    private String password;
+    private TextInputEditText mEmailView;
+    private TextInputEditText mPasswordView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        Bundle extras = getIntent().getExtras();
+        email = extras.getString("Extra_email");
+        password = extras.getString("Extra_password");
+        mEmailView = (TextInputEditText) findViewById(R.id.sign_up_email);
+        assert mEmailView != null;
+        mEmailView.setText(email);
+        mPasswordView = (TextInputEditText) findViewById(R.id.sign_up_password);
+        assert mPasswordView != null;
+        mPasswordView.setText(password);
         Button signUpButton = (Button) findViewById(R.id.sign_up_button);
         assert signUpButton != null;
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -50,31 +62,16 @@ public class SignUpActivity extends AppCompatActivity {
         TextInputEditText mNameView = (TextInputEditText) findViewById(R.id.sign_up_name);
         assert mNameView != null;
         mNameView.setError(null);
-        TextInputEditText mEmailView = (TextInputEditText) findViewById(R.id.sign_up_email);
-        assert mEmailView != null;
         mEmailView.setError(null);
-        TextInputEditText mPasswordView = (TextInputEditText) findViewById(R.id.sign_up_password);
-        assert mPasswordView != null;
         mPasswordView.setError(null);
 
         // Store values at the time of the sign up attempt.
         String name = mNameView.getText().toString();
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        email = mEmailView.getText().toString();
+        password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
-
-        // Check for a valid user's name.
-        if (TextUtils.isEmpty(name)) {
-            mNameView.setError(getString(R.string.error_field_required));
-            focusView = mNameView;
-            cancel = true;
-        } else if (!isNameValid(name)) {
-            mNameView.setError(getString(R.string.error_invalid_name));
-            focusView = mNameView;
-            cancel = true;
-        }
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
@@ -91,6 +88,17 @@ public class SignUpActivity extends AppCompatActivity {
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
+            cancel = true;
+        }
+
+        // Check for a valid user's name.
+        if (TextUtils.isEmpty(name)) {
+            mNameView.setError(getString(R.string.error_field_required));
+            focusView = mNameView;
+            cancel = true;
+        } else if (!isNameValid(name)) {
+            mNameView.setError(getString(R.string.error_invalid_name));
+            focusView = mNameView;
             cancel = true;
         }
 

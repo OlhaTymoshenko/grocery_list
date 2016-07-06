@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,7 +20,6 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,10 +46,12 @@ public class LoginActivity extends AppCompatActivity {
     CallbackManager callbackManager;
 
     // UI references.
-    private EditText mEmailView;
-    private EditText mPasswordView;
+    private TextInputEditText mEmailView;
+    private TextInputEditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private String email;
+    private String password;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -70,8 +72,8 @@ public class LoginActivity extends AppCompatActivity {
             callbackManager = CallbackManager.Factory.create();
             setContentView(R.layout.activity_login);
             // Set up the login form.
-            mEmailView = (EditText) findViewById(R.id.email);
-            mPasswordView = (EditText) findViewById(R.id.password);
+            mEmailView = (TextInputEditText) findViewById(R.id.email);
+            mPasswordView = (TextInputEditText) findViewById(R.id.password);
             mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -138,7 +140,14 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+                    Bundle extras = new Bundle();
+                    saveEmail();
+                    extras.putString("Extra_email", email);
+                    savePassword();
+                    extras.putString("Extra_password", password);
+                    intent.putExtras(extras);
                     startActivity(intent);
+                    finish();
                 }
             });
         }
@@ -161,8 +170,8 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        saveEmail();
+        savePassword();
 
         boolean cancel = false;
         View focusView = null;
@@ -227,6 +236,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
+    }
+
+    private String saveEmail() {
+        email = mEmailView.getText().toString();
+        return email;
+    }
+
+    private String savePassword() {
+        password = mPasswordView.getText().toString();
+        return password;
     }
 
     private APIService buildRequest() {
