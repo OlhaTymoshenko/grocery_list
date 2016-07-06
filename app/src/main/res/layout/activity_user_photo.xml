@@ -44,7 +44,7 @@
         android:id="@+id/done_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/done"
+        android:text="@string/done_button"
         android:textSize="20sp"
         android:textColor="@color/colorText"
         android:paddingTop="8dp"

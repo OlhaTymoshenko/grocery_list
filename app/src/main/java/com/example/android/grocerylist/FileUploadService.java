@@ -35,7 +35,8 @@ public class FileUploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", MODE_PRIVATE);
+        SharedPreferences preferences = getApplicationContext()
+                .getSharedPreferences("token", MODE_PRIVATE);
         final String token = preferences.getString("token", null);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -69,7 +70,8 @@ public class FileUploadService extends IntentService {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 Log.v("Upload", "success");
-                File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                File storageDir = Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
                 File image = new File(storageDir, file.getName());
                 boolean deleted = image.delete();
             }

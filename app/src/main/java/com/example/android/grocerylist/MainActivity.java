@@ -197,7 +197,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void logout() {
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", MODE_PRIVATE);
+        SharedPreferences preferences = getApplicationContext()
+                .getSharedPreferences("token", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("token");
         editor.apply();
@@ -257,7 +258,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private Picasso getPicture() {
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", MODE_PRIVATE);
+        SharedPreferences preferences = getApplicationContext()
+                .getSharedPreferences("token", MODE_PRIVATE);
         final String token = preferences.getString("token", null);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
