@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -126,6 +127,8 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+        LinearLayout container = (LinearLayout) navigationView.getHeaderView(0).findViewById(R.id.profile_image_container);
+        container.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         circleImageView = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.profile_image);
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,47 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="190dp"
-                android:background="@color/colorPrimary">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:background="@color/colorPrimary"
+                android:orientation="vertical">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/profile_image"
-        android:layout_width="76dp"
-        android:layout_height="76dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
+    <LinearLayout
+        android:id="@+id/profile_image_container"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:scaleType="centerCrop"
-        android:background="@layout/shape"
-        android:src="@drawable/ic_account_circle_grey600_36dp"
-        app:civ_border_width="1dp"
-        app:civ_border_color="@color/colorLeftText"/>
+        android:fitsSystemWindows="true"
+        app:layout_collapseMode="parallax">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:background="@layout/shape"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_account_circle_grey600_36dp"
+            app:civ_border_color="@color/colorLeftText"
+            app:civ_border_width="1dp"
+            android:fitsSystemWindows="true"
+            app:layout_collapseMode="parallax"/>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="@color/colorLeftText"
-        android:textStyle="bold"
+        android:layout_alignLeft="@id/profile_image_container"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@id/profile_image_container"
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
         android:gravity="start"
         android:paddingBottom="4dp"
-        android:layout_marginBottom="24dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@id/profile_image"
-        android:layout_alignStart="@id/profile_image"/>
+        android:textColor="@color/colorLeftText"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
+
     <TextView
         android:id="@+id/user_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="start"
-        android:layout_marginBottom="8dp"
-        android:textSize="14sp"
-        android:textColor="@color/colorLeftText"
-        android:layout_alignParentBottom="true"
         android:layout_alignLeft="@id/user_name"
-        android:layout_alignStart="@id/user_name"/>
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@id/user_name"
+        android:layout_marginBottom="8dp"
+        android:gravity="start"
+        android:textColor="@color/colorLeftText"
+        android:textSize="14sp"/>
 </RelativeLayout>
