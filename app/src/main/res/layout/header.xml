@@ -5,7 +5,7 @@
                 android:layout_height="190dp"
                 android:background="@color/colorPrimary">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_image"
         android:layout_width="76dp"
@@ -17,7 +17,9 @@
         android:layout_alignParentStart="true"
         android:scaleType="centerCrop"
         android:background="@layout/shape"
-        android:src="@drawable/ic_account_circle_grey600_36dp"/>
+        android:src="@drawable/ic_account_circle_grey600_36dp"
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/colorLeftText"/>
     <TextView
         android:id="@+id/user_name"
         android:layout_width="wrap_content"

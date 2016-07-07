@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -26,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -42,6 +44,8 @@ public class UserPhotoActivity extends AppCompatActivity {
     private File image;
     static final int MY_PERMISSIONS_REQUEST = 1;
     static final int PICK_IMAGE = 1;
+    private int width;
+    private int height;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +110,7 @@ public class UserPhotoActivity extends AppCompatActivity {
                 try {
                     photo = createImageFile();
                     OutputStream outputStream = new FileOutputStream(photo);
-                    byte[] buf = new byte[1024*1024];
+                    byte[] buf = new byte[1024 * 1024];
                     int len;
                     InputStream inputStream = getContentResolver().openInputStream(uri);
                     assert inputStream != null;
@@ -118,13 +122,16 @@ public class UserPhotoActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 ImageView imageView = (ImageView) findViewById(R.id.user_photo);
-                imageView.setImageBitmap(decodeSampledBitmapFromFile(photo, imageView.getWidth(), imageView.getHeight()));
+                assert imageView != null;
+                width = imageView.getWidth();
+                height = imageView.getHeight();
+                new BitmapWorkerTask(imageView).execute(photo);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -132,28 +139,6 @@ public class UserPhotoActivity extends AppCompatActivity {
             takePicture();
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private void takePicture() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
-    }
-
-    private void selectPicture() {
-        Intent selectPictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        selectPictureIntent.setType("image/*");
-        startActivityForResult(Intent.createChooser(selectPictureIntent, "Select picture"), PICK_IMAGE);
     }
 
     private Picasso getPicture() {
@@ -178,6 +163,28 @@ public class UserPhotoActivity extends AppCompatActivity {
                 .downloader(new OkHttp3Downloader(client))
                 .loggingEnabled(true)
                 .build();
+    }
+
+    private void takePicture() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private void selectPicture() {
+        Intent selectPictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        selectPictureIntent.setType("image/*");
+        startActivityForResult(Intent.createChooser(selectPictureIntent, "Select picture"), PICK_IMAGE);
     }
 
     private File createImageFile() throws IOException {
@@ -214,5 +221,30 @@ public class UserPhotoActivity extends AppCompatActivity {
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(imageFile.getPath(), options);
+    }
+
+    class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewWeakReference;
+        private File data = null;
+
+        public BitmapWorkerTask(ImageView imageView) {
+            imageViewWeakReference = new WeakReference<>(imageView);
+        }
+
+        @Override
+        protected Bitmap doInBackground(File... params) {
+            data = params[0];
+            return decodeSampledBitmapFromFile(data, width, height);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (bitmap != null) {
+                final ImageView imageView = imageViewWeakReference.get();
+                if (imageView != null) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            }
+        }
     }
 }
