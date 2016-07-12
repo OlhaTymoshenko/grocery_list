@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity
     private ActionBarDrawerToggle drawerToggle;
     private CircleImageView circleImageView;
     private BroadcastReceiver broadcastReceiver;
-    public final static String BROADCAST_ACTION = "photo update";
+    public final static String BROADCAST_ACTION_1 = "photo update";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "Photo is updated", Toast.LENGTH_SHORT).show();
             }
         };
-        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
+        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION_1);
         registerReceiver(broadcastReceiver, intentFilter);
     }
 

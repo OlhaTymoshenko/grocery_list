@@ -34,7 +34,7 @@ public class FileUploadService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent(final Intent intent) {
         SharedPreferences preferences = getApplicationContext()
                 .getSharedPreferences("token", MODE_PRIVATE);
         final String token = preferences.getString("token", null);
@@ -74,8 +74,10 @@ public class FileUploadService extends IntentService {
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
                 File image = new File(storageDir, file.getName());
                 boolean deleted = image.delete();
-                Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
-                sendBroadcast(intent);
+                Intent intent1 = new Intent(UserPhotoActivity.BROADCAST_ACTION_2);
+                sendBroadcast(intent1);
+                Intent intent2 = new Intent(MainActivity.BROADCAST_ACTION_1);
+                sendBroadcast(intent2);
             }
 
             @Override
