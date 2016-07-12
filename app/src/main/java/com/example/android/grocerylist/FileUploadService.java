@@ -74,6 +74,8 @@ public class FileUploadService extends IntentService {
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
                 File image = new File(storageDir, file.getName());
                 boolean deleted = image.delete();
+                Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
+                sendBroadcast(intent);
             }
 
             @Override

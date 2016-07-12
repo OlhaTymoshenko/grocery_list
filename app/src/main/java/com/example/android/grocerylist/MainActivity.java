@@ -1,8 +1,10 @@
 package com.example.android.grocerylist;
 
 import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private CircleImageView circleImageView;
+    private BroadcastReceiver broadcastReceiver;
+    public final static String BROADCAST_ACTION = "photo update";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity
         LinearLayout container = (LinearLayout) navigationView.getHeaderView(0).findViewById(R.id.profile_image_container);
         container.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         circleImageView = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.profile_image);
+        reloadAvatar();
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,17 +181,26 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        reloadAvatar();
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                reloadAvatar();
+                Toast.makeText(getApplicationContext(), "Photo is updated", Toast.LENGTH_SHORT).show();
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
+        registerReceiver(broadcastReceiver, intentFilter);
     }
 
     private void reloadAvatar() {
         Picasso picasso = getPicture();
         picasso.load(getString(R.string.picasso_url)).into(circleImageView);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
     }
 
     @Override
