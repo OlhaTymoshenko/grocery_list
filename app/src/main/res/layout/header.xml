@@ -29,7 +29,7 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_account_circle_grey600_36dp"
             app:civ_border_color="@color/colorLeftText"
-            app:civ_border_width="1dp"
+            app:civ_border_width="2dp"
             android:fitsSystemWindows="true"
             app:layout_collapseMode="parallax"/>
     </LinearLayout>

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -48,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private TextInputEditText mEmailView;
     private TextInputEditText mPasswordView;
+    private TextInputLayout emailLayout;
+    private TextInputLayout passwordLayout;
     private View mProgressView;
     private View mLoginFormView;
     private String email;
@@ -74,6 +77,8 @@ public class LoginActivity extends AppCompatActivity {
             // Set up the login form.
             mEmailView = (TextInputEditText) findViewById(R.id.email);
             mPasswordView = (TextInputEditText) findViewById(R.id.password);
+            emailLayout = (TextInputLayout) findViewById(R.id.email_layout);
+            passwordLayout = (TextInputLayout) findViewById(R.id.password_layout);
             mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -166,8 +171,8 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void attemptLogin() {
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        emailLayout.setError(null);
+        passwordLayout.setError(null);
 
         // Store values at the time of the login attempt.
         saveEmail();
@@ -178,19 +183,19 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+            passwordLayout.setError(getString(R.string.error_invalid_password));
+            focusView = passwordLayout;
             cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            emailLayout.setError(getString(R.string.error_field_required));
+            focusView = emailLayout;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            emailLayout.setError(getString(R.string.error_invalid_email));
+            focusView = emailLayout;
             cancel = true;
         }
 

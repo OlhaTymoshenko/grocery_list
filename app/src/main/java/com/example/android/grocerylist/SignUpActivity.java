@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -59,13 +60,20 @@ public class SignUpActivity extends AppCompatActivity {
      */
     private void attemptSignIn() {
         // Reset errors.
-        TextInputEditText mNameView = (TextInputEditText) findViewById(R.id.sign_up_name);
-        assert mNameView != null;
-        mNameView.setError(null);
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+
+        TextInputLayout nameLayout = (TextInputLayout) findViewById(R.id.name_layout);
+        assert nameLayout != null;
+        nameLayout.setError(null);
+        TextInputLayout emailLayout = (TextInputLayout) findViewById(R.id.email_layout);
+        assert emailLayout != null;
+        emailLayout.setError(null);
+        TextInputLayout passwordLayout = (TextInputLayout) findViewById(R.id.password_layout);
+        assert passwordLayout != null;
+        passwordLayout.setError(null);
 
         // Store values at the time of the sign up attempt.
+        TextInputEditText mNameView = (TextInputEditText) findViewById(R.id.sign_up_name);
+        assert mNameView != null;
         String name = mNameView.getText().toString();
         email = mEmailView.getText().toString();
         password = mPasswordView.getText().toString();
@@ -75,30 +83,30 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+            passwordLayout.setError(getString(R.string.error_invalid_password));
+            focusView = passwordLayout;
             cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            emailLayout.setError(getString(R.string.error_field_required));
+            focusView = emailLayout;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            emailLayout.setError(getString(R.string.error_invalid_email));
+            focusView = emailLayout;
             cancel = true;
         }
 
         // Check for a valid user's name.
         if (TextUtils.isEmpty(name)) {
-            mNameView.setError(getString(R.string.error_field_required));
-            focusView = mNameView;
+            nameLayout.setError(getString(R.string.error_field_required));
+            focusView = nameLayout;
             cancel = true;
         } else if (!isNameValid(name)) {
-            mNameView.setError(getString(R.string.error_invalid_name));
-            focusView = mNameView;
+            nameLayout.setError(getString(R.string.error_invalid_name));
+            focusView = nameLayout;
             cancel = true;
         }
 
