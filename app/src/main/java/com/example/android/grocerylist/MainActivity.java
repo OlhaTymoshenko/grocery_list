@@ -193,8 +193,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void reloadAvatar() {
+        int width = circleImageView.getLayoutParams().width;
+        int height = circleImageView.getLayoutParams().height;
         Picasso picasso = getPicture();
-        picasso.load(getString(R.string.picasso_url)).into(circleImageView);
+        picasso.load(getString(R.string.picasso_url))
+                .resize(width, height)
+                .centerCrop()
+                .into(circleImageView);
     }
 
     @Override

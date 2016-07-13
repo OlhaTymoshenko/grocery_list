@@ -57,14 +57,28 @@ public class UserPhotoActivity extends AppCompatActivity {
     static final int MY_PERMISSIONS_REQUEST = 1;
     static final int PICK_IMAGE = 1;
     public final static String BROADCAST_ACTION_2 = "close activity";
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_photo);
-        ImageView imageView = (ImageView) findViewById(R.id.user_photo);
-        Picasso picasso = getPicture();
-        picasso.load(getString(R.string.picasso_url)).into(imageView);
+        imageView = (ImageView) findViewById(R.id.user_photo);
+
+        getWindow().getDecorView().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                Picasso picasso = getPicture();
+                picasso.load(getString(R.string.picasso_url))
+                        .resize(getWindow().getDecorView().getWidth(), 0)
+//                        .centerCrop()
+                        .into(imageView);
+                getWindow().getDecorView().removeOnLayoutChangeListener(this);
+            }
+        });
+
+        assert imageView != null;
+
         TextView textViewTakePicture = (TextView) findViewById(R.id.take_picture_text_view);
         assert textViewTakePicture != null;
         textViewTakePicture.setOnClickListener(new View.OnClickListener() {
@@ -218,7 +232,7 @@ public class UserPhotoActivity extends AppCompatActivity {
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         image = File.createTempFile(imageFileName, ".jpg", storageDir);
         currentPhotoPath = image.getAbsolutePath();
         return image;

@@ -46,7 +46,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class LoginActivity extends AppCompatActivity {
     CallbackManager callbackManager;
 
-    // UI references.
     private TextInputEditText mEmailView;
     private TextInputEditText mPasswordView;
     private TextInputLayout emailLayout;
