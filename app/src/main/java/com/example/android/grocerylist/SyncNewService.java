@@ -53,6 +53,7 @@ public class SyncNewService extends IntentService {
                 .client(client)
                 .build();
         APIService service = retrofit.create(APIService.class);
+
         SqlRepository repository = new SqlRepository(getApplicationContext());
         ArrayList<TaskModel> taskModels = repository.findNewItems();
         for (TaskModel model : taskModels) {

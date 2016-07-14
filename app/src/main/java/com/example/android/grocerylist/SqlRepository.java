@@ -166,7 +166,6 @@ public class SqlRepository {
                 selection,
                 selectionArgs);
         database.close();
-
     }
 
     public void setDeletedSynced (int itemId) {

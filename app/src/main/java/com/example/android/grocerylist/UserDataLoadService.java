@@ -47,6 +47,7 @@ public class UserDataLoadService extends IntentService {
                 return chain.proceed(request);
             }
         }).build();
+
         Retrofit retrofit = new Retrofit
                 .Builder()
                 .baseUrl(getString(R.string.url))

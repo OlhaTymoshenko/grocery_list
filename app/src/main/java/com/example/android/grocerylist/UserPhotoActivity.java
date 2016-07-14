@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,9 +25,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,45 +35,34 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
-
 public class UserPhotoActivity extends AppCompatActivity {
-    static final int REQUEST_IMAGE_CAPTURE = 0;
     private String currentPhotoPath;
     private File image;
     private int width;
     private int height;
     private View progressView;
     private View photoFormView;
+    private ImageView imageView;
     private BroadcastReceiver receiver;
+    static final int REQUEST_IMAGE_CAPTURE = 0;
     static final int MY_PERMISSIONS_REQUEST = 1;
     static final int PICK_IMAGE = 1;
     public final static String BROADCAST_ACTION_2 = "close activity";
-    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_photo);
-        imageView = (ImageView) findViewById(R.id.user_photo);
 
+        imageView = (ImageView) findViewById(R.id.user_photo);
         getWindow().getDecorView().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                Picasso picasso = getPicture();
-                picasso.load(getString(R.string.picasso_url))
-                        .resize(getWindow().getDecorView().getWidth(), 0)
-//                        .centerCrop()
-                        .into(imageView);
+                ImageLoader imageLoader = new ImageLoader(getApplicationContext());
+                imageLoader.loadImage(getString(R.string.picasso_url), getWindow().getDecorView().getWidth(), 0, imageView);
                 getWindow().getDecorView().removeOnLayoutChangeListener(this);
             }
         });
-
-        assert imageView != null;
 
         TextView textViewTakePicture = (TextView) findViewById(R.id.take_picture_text_view);
         assert textViewTakePicture != null;
@@ -103,6 +88,7 @@ public class UserPhotoActivity extends AppCompatActivity {
                 selectPicture();
             }
         });
+
         TextView textViewDone = (TextView) findViewById(R.id.done_text_view);
         assert textViewDone != null;
         textViewDone.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +104,7 @@ public class UserPhotoActivity extends AppCompatActivity {
                 }
             }
         });
+
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -125,6 +112,7 @@ public class UserPhotoActivity extends AppCompatActivity {
                 finish();
             }
         };
+
         IntentFilter filter = new IntentFilter(BROADCAST_ACTION_2);
         registerReceiver(receiver, filter);
     }
@@ -181,30 +169,6 @@ public class UserPhotoActivity extends AppCompatActivity {
             takePicture();
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private Picasso getPicture() {
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("token", MODE_PRIVATE);
-        final String token = preferences.getString("token", null);
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request().newBuilder()
-                                .addHeader("X-AUTH-TOKEN", token)
-                                .build();
-                        return chain.proceed(request);
-                    }
-                })
-                .addInterceptor(interceptor)
-                .build();
-
-        return new Picasso.Builder(getApplicationContext())
-                .downloader(new OkHttp3Downloader(client))
-                .loggingEnabled(true)
-                .build();
     }
 
     private void takePicture() {

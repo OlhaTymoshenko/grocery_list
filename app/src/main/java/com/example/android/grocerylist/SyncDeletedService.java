@@ -54,6 +54,7 @@ public class SyncDeletedService extends IntentService {
                 .build();
         APIService service = retrofit.create(APIService.class);
         SqlRepository repository = new SqlRepository(getApplicationContext());
+
         ArrayList<TaskModel> taskModels = repository.findDeletedItems();
         for (TaskModel model : taskModels) {
             int id = model.getRemoteId();

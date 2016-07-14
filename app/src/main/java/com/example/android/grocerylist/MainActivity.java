@@ -28,29 +28,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
-import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 public class MainActivity extends AppCompatActivity
         implements ItemDialogFragment.ItemDialogListener {
-    private static final int ARRAY_LIST_LOADER_ID = 1;
-    private static final int USER_MODEL_LOADER_ID = 2;
     private ItemAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private CircleImageView circleImageView;
     private BroadcastReceiver broadcastReceiver;
+    private static final int ARRAY_LIST_LOADER_ID = 1;
+    private static final int USER_MODEL_LOADER_ID = 2;
     public final static String BROADCAST_ACTION_1 = "photo update";
 
     @Override
@@ -195,11 +187,8 @@ public class MainActivity extends AppCompatActivity
     private void reloadAvatar() {
         int width = circleImageView.getLayoutParams().width;
         int height = circleImageView.getLayoutParams().height;
-        Picasso picasso = getPicture();
-        picasso.load(getString(R.string.picasso_url))
-                .resize(width, height)
-                .centerCrop()
-                .into(circleImageView);
+        ImageLoader imageLoader = new ImageLoader(getApplicationContext());
+        imageLoader.loadImageCenterCrop(getString(R.string.picasso_url), width, height, circleImageView);
     }
 
     @Override
@@ -277,31 +266,6 @@ public class MainActivity extends AppCompatActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
-    }
-
-    private Picasso getPicture() {
-        SharedPreferences preferences = getApplicationContext()
-                .getSharedPreferences("token", MODE_PRIVATE);
-        final String token = preferences.getString("token", null);
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request().newBuilder()
-                                .addHeader("X-AUTH-TOKEN", token)
-                                .build();
-                        return chain.proceed(request);
-                    }
-                })
-                .addInterceptor(interceptor)
-                .build();
-
-        return new Picasso.Builder(getApplicationContext())
-                .downloader(new OkHttp3Downloader(client))
-                .loggingEnabled(true)
-                .build();
     }
 }
 

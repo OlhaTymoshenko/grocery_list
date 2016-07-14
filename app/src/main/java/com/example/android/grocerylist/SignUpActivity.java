@@ -34,6 +34,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
         Bundle extras = getIntent().getExtras();
         email = extras.getString("Extra_email");
         password = extras.getString("Extra_password");
@@ -43,6 +44,7 @@ public class SignUpActivity extends AppCompatActivity {
         mPasswordView = (TextInputEditText) findViewById(R.id.sign_up_password);
         assert mPasswordView != null;
         mPasswordView.setText(password);
+
         Button signUpButton = (Button) findViewById(R.id.sign_up_button);
         assert signUpButton != null;
         signUpButton.setOnClickListener(new View.OnClickListener() {

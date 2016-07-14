@@ -16,8 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:title="@string/app_name"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/app_name"/>
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
@@ -73,7 +73,6 @@
                         android:id="@+id/password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
                         android:imeActionId="@+id/login"
                         android:imeActionLabel="@string/action_sign_in_short"
                         android:imeOptions="actionUnspecified"
@@ -84,12 +83,12 @@
 
                 <Button
                     android:id="@+id/email_sign_in_button"
-                    style="?android:textAppearanceSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/action_sign_in_short"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    style="?android:textAppearanceSmall"/>
 
                 <com.facebook.login.widget.LoginButton
                     android:id="@+id/login_button"
@@ -104,12 +103,12 @@
 
                 <Button
                     android:id="@+id/email_sign_up_button"
-                    style="?android:textAppearanceSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/action_sign_up_short"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    style="?android:textAppearanceSmall"/>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
