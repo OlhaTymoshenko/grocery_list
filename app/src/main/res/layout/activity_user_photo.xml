@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.android.grocerylist.UserPhotoActivity">
+    tools:context=".ui.profile.UserPhotoActivity">
 
     <ProgressBar
         android:id="@+id/send_photo_progress"

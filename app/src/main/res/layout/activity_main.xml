@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.android.grocerylist.MainActivity">
+    tools:context=".ui.items.MainActivity">
 
     <include layout="@layout/content_main"/>
 

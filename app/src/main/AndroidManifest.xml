@@ -7,14 +7,14 @@
     <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
-        android:name=".GroceryListApplication"
+        android:name=".app.GroceryListApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.signin.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -29,35 +29,40 @@
             android:label="@string/title_activity_login"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.items.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".SignUpActivity">
+        <activity android:name=".ui.signup.SignUpActivity">
         </activity>
         <activity
-            android:name=".UserPhotoActivity"
+            android:name=".ui.profile.UserPhotoActivity"
             android:theme="@style/AppTheme.StatusBar">
         </activity>
 
         <service
-            android:name=".ItemsUpdateService"
+            android:name=".service.ItemsUpdateService"
             android:exported="false"/>
         <service
-            android:name=".SyncNewService"
+            android:name=".service.SyncNewService"
             android:exported="false">
         </service>
         <service
-            android:name=".SyncDeletedService"
+            android:name=".service.SyncDeletedService"
             android:exported="false">
         </service>
         <service
-            android:name=".UserDataLoadService"
+            android:name=".service.UserDataLoadService"
             android:exported="false">
         </service>
         <service
-            android:name=".FileUploadService"
+            android:name=".service.FileUploadService"
             android:exported="false">
+        </service>
+        <service android:name=".service.ItemFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
         </service>
 
         <meta-data
