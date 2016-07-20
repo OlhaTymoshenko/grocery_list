@@ -4,9 +4,10 @@ package com.example.android.grocerylist.api.dto;
  * Created by lapa on 20.05.16.
  */
 public class UserDTO {
-    String name;
-    String email;
-    String avatar;
+
+   private String name;
+   private String email;
+   private String avatar;
 
     public String getName() {
         return name;

@@ -5,9 +5,9 @@ package com.example.android.grocerylist.api.dto;
  */
 public class SignUpDTO {
 
-    String name;
-    String email;
-    String password;
+   private String name;
+   private String email;
+   private String password;
 
     public String getName() {
         return name;

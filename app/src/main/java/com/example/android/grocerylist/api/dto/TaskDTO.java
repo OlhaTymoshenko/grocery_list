@@ -5,8 +5,8 @@ package com.example.android.grocerylist.api.dto;
  */
 public class TaskDTO {
 
-    String title;
-    Integer id;
+   private String title;
+   private Integer id;
 
     public String getTitle() {
         return title;

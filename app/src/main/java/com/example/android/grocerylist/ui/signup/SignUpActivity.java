@@ -13,20 +13,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.android.grocerylist.ui.items.MainActivity;
 import com.example.android.grocerylist.R;
 import com.example.android.grocerylist.api.APIService;
+import com.example.android.grocerylist.api.RetrofitGenerator;
 import com.example.android.grocerylist.api.dto.SignUpDTO;
-import com.google.gson.Gson;
+import com.example.android.grocerylist.ui.items.MainActivity;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class SignUpActivity extends AppCompatActivity {
     private String email;
@@ -54,7 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attemptSignIn();
+                attemptSignUp();
             }
         });
     }
@@ -64,7 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual sign up attempt is made.
      */
-    private void attemptSignIn() {
+    private void attemptSignUp() {
         // Reset errors.
 
         TextInputLayout nameLayout = (TextInputLayout) findViewById(R.id.name_layout);
@@ -125,7 +120,7 @@ public class SignUpActivity extends AppCompatActivity {
             signUpDTO.setName(name);
             signUpDTO.setEmail(email);
             signUpDTO.setPassword(password);
-            APIService service = buildRequest();
+            APIService service = RetrofitGenerator.createService(APIService.class);
             Call<String> call = service.signUp(signUpDTO);
             call.enqueue(new Callback<String>() {
                 @Override
@@ -163,18 +158,5 @@ public class SignUpActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
-    }
-
-    private APIService buildRequest() {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(getString(R.string.url))
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(new Gson()))
-                .client(client)
-                .build();
-        return retrofit.create(APIService.class);
     }
 }

@@ -25,7 +25,7 @@
             android:layout_height="76dp"
             android:layout_marginLeft="24dp"
             android:layout_marginStart="24dp"
-            android:background="@layout/shape"
+            android:background="@layout/shape_for_circle_image_view"
             android:fitsSystemWindows="true"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_account_circle_grey600_36dp"

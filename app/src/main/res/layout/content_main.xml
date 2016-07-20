@@ -42,7 +42,7 @@
                 android:id="@+id/recycle_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:listitem="@layout/item">
+                tools:listitem="@layout/list_item_for_main_activity">
             </android.support.v7.widget.RecyclerView>
         </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:headerLayout="@layout/header"
+        app:headerLayout="@layout/header_for_navigation_view"
         app:menu="@menu/drawer">
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
