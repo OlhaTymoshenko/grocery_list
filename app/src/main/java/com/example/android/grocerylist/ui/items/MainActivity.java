@@ -95,20 +95,10 @@ public class MainActivity extends AppCompatActivity
         });
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-                R.string.drawer_open, R.string.drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
-
-            @Override
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-            }
-        };
+                R.string.drawer_open, R.string.drawer_close);
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayout.addDrawerListener(drawerToggle);
-        Intent serviceIntent = new Intent(MainActivity.this, UserDataLoadService.class);
+        Intent serviceIntent = new Intent(this, UserDataLoadService.class);
         startService(serviceIntent);
         getLoaderManager().initLoader(USER_MODEL_LOADER_ID, null, new LoaderManager.LoaderCallbacks<UserModel>() {
             @Override
@@ -225,7 +215,7 @@ public class MainActivity extends AppCompatActivity
         editor.apply();
         LoginManager.getInstance().logOut();
         SqlRepository repository = new SqlRepository(getApplicationContext());
-        repository.logout();
+        repository.deleteDatabases();
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
         finish();

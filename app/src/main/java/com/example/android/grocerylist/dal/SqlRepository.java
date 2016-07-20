@@ -6,13 +6,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.android.grocerylist.dal.ItemWriterContract;
-import com.example.android.grocerylist.dal.ItemWriterDBHelper;
 import com.example.android.grocerylist.model.TaskModel;
 import com.example.android.grocerylist.model.UserModel;
+import com.example.android.grocerylist.service.ItemsUpdatedEvent;
 import com.example.android.grocerylist.service.SyncDeletedService;
 import com.example.android.grocerylist.service.SyncNewService;
-import com.example.android.grocerylist.service.ItemsUpdatedEvent;
 import com.example.android.grocerylist.service.UserDataUpdatedEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,9 +32,9 @@ public class SqlRepository {
     public void addItems(TaskModel item) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("item_name", item.getItemName());
-        values.put("is_new", 1);
-        database.insert("items", null, values);
+        values.put(ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME, item.getItemName());
+        values.put(ItemWriterContract.ItemEntry.COLUMN_NAME_IS_NEW, 1);
+        database.insert(ItemWriterContract.ItemEntry.TABLE_NAME, null, values);
         database.close();
         Intent intent = new Intent(context, SyncNewService.class);
         context.startService(intent);
@@ -46,7 +44,7 @@ public class SqlRepository {
     public void deleteItems(TaskModel item) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("is_deleted", 1);
+        values.put(ItemWriterContract.ItemEntry.COLUMN_NAME_IS_DELETED, 1);
         String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_ID + " =?";
         String[] selectionArgs = {String.valueOf(item.getItemId())};
         database.update(
@@ -69,10 +67,11 @@ public class SqlRepository {
         for (int i = 0; i < taskModels.size(); i++) {
             values.clear();
             TaskModel model = taskModels.get(i);
-            values.put("item_name", model.getItemName());
-            values.put("remote_id", model.getRemoteId());
-            values.put("updated", 1);
-            database.insertWithOnConflict("items", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            values.put(ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_NAME, model.getItemName());
+            values.put(ItemWriterContract.ItemEntry.COLUMN_NAME_REMOTE_ID, model.getRemoteId());
+            values.put(ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_UPDATED, 1);
+            database.insertWithOnConflict(ItemWriterContract.ItemEntry.TABLE_NAME, null, values,
+                    SQLiteDatabase.CONFLICT_REPLACE);
         }
         String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_ITEM_UPDATED + " =? AND " +
                 ItemWriterContract.ItemEntry.COLUMN_NAME_IS_NEW + " =? AND " +
@@ -185,7 +184,7 @@ public class SqlRepository {
         database.close();
     }
 
-    public void logout() {
+    public void deleteDatabases() {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, null, null);
         database.delete(ItemWriterContract.UserEntry.TABLE_NAME, null, null);

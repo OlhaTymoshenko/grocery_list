@@ -6,7 +6,7 @@ import android.provider.BaseColumns;
  * Created by lapa on 04.04.16.
  */
 public final class ItemWriterContract {
-    public ItemWriterContract () {}
+    private ItemWriterContract () {}
 
     public static abstract class ItemEntry implements BaseColumns {
         public static final String TABLE_NAME = "items";
