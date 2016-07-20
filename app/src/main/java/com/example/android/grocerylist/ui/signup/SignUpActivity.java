@@ -1,8 +1,6 @@
 package com.example.android.grocerylist.ui.signup;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -17,6 +15,7 @@ import com.example.android.grocerylist.R;
 import com.example.android.grocerylist.api.APIService;
 import com.example.android.grocerylist.api.RetrofitGenerator;
 import com.example.android.grocerylist.api.dto.SignUpDTO;
+import com.example.android.grocerylist.ui.common.TokenSaver;
 import com.example.android.grocerylist.ui.items.MainActivity;
 
 import retrofit2.Call;
@@ -75,7 +74,7 @@ public class SignUpActivity extends AppCompatActivity {
         // Store values at the time of the sign up attempt.
         TextInputEditText mNameView = (TextInputEditText) findViewById(R.id.sign_up_name);
         assert mNameView != null;
-        String name = mNameView.getText().toString();
+        final String name = mNameView.getText().toString();
         email = mEmailView.getText().toString();
         password = mPasswordView.getText().toString();
 
@@ -127,11 +126,8 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()) {
                         String token = response.body();
-                        SharedPreferences preferences = getApplicationContext()
-                                .getSharedPreferences("token", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("token", token);
-                        editor.apply();
+                        TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
+                        tokenSaver.saveToken(token);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                         finish();

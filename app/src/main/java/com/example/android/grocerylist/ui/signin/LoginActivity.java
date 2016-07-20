@@ -3,7 +3,6 @@ package com.example.android.grocerylist.ui.signin;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -24,26 +23,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.grocerylist.ui.items.MainActivity;
 import com.example.android.grocerylist.R;
-import com.example.android.grocerylist.ui.signup.SignUpActivity;
 import com.example.android.grocerylist.api.APIService;
+import com.example.android.grocerylist.api.RetrofitGenerator;
 import com.example.android.grocerylist.api.dto.LoginDTO;
+import com.example.android.grocerylist.ui.common.TokenSaver;
+import com.example.android.grocerylist.ui.items.MainActivity;
+import com.example.android.grocerylist.ui.signup.SignUpActivity;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.gson.Gson;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * A login screen that offers login via email/password.
@@ -111,13 +106,15 @@ public class LoginActivity extends AppCompatActivity {
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    APIService service = buildRequest();
+                    APIService service = RetrofitGenerator.createService(APIService.class);
                     Call<String> call = service.signInFb(loginResult.getAccessToken().getToken());
                     call.enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
                             if (response.isSuccessful()) {
-                                saveToken(response);
+                                String token = response.body();
+                                TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
+                                tokenSaver.saveToken(token);
                                 Intent intent = new Intent(getApplicationContext(),
                                         MainActivity.class);
                                 startActivity(intent);
@@ -214,13 +211,15 @@ public class LoginActivity extends AppCompatActivity {
             LoginDTO loginDTO = new LoginDTO();
             loginDTO.setEmail(email);
             loginDTO.setPassword(password);
-            APIService service = buildRequest();
+            APIService service = RetrofitGenerator.createService(APIService.class);
             Call<String> call = service.signIn(loginDTO);
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()) {
-                        saveToken(response);
+                        String token = response.body();
+                        TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
+                        tokenSaver.saveToken(token);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                         finish();
@@ -255,28 +254,6 @@ public class LoginActivity extends AppCompatActivity {
     private String savePassword() {
         password = mPasswordView.getText().toString();
         return password;
-    }
-
-    private APIService buildRequest() {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(getString(R.string.url))
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(new Gson()))
-                .client(client)
-                .build();
-        return retrofit.create(APIService.class);
-    }
-
-    private void saveToken(Response<String> response) {
-        String token = response.body();
-        SharedPreferences preferences = getApplicationContext()
-                .getSharedPreferences("token", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("token", token);
-        editor.apply();
     }
 
     /**
