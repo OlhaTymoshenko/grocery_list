@@ -67,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences preferences = getApplicationContext()
                 .getSharedPreferences("token", MODE_PRIVATE);
         if (preferences.contains("token")) {
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
         } else {
@@ -116,8 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                                 String token = response.body();
                                 TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
                                 tokenSaver.saveToken(token);
-                                Intent intent = new Intent(getApplicationContext(),
-                                        MainActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
@@ -146,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
             signUpButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                     Bundle extras = new Bundle();
                     saveEmail();
                     extras.putString("Extra_email", email);
@@ -222,7 +221,7 @@ public class LoginActivity extends AppCompatActivity {
                         String token = response.body();
                         TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
                         tokenSaver.saveToken(token);
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     } else {

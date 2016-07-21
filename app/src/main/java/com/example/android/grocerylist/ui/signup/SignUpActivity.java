@@ -129,7 +129,7 @@ public class SignUpActivity extends AppCompatActivity {
                         String token = response.body();
                         TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
                         tokenSaver.saveToken(token);
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     } else {

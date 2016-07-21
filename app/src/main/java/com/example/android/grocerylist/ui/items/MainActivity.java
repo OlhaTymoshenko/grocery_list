@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
         );
-        Intent intent = new Intent(MainActivity.this, ItemsUpdateService.class);
+        Intent intent = new Intent(this, ItemsUpdateService.class);
         startService(intent);
         adapter = new ItemAdapter();
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity
         LoginManager.getInstance().logOut();
         SqlRepository repository = new SqlRepository(getApplicationContext());
         repository.deleteDatabases();
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
