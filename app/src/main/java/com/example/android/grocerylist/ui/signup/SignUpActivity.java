@@ -12,8 +12,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.android.grocerylist.R;
-import com.example.android.grocerylist.api.APIService;
 import com.example.android.grocerylist.api.RetrofitGenerator;
+import com.example.android.grocerylist.api.SignUpAPIService;
 import com.example.android.grocerylist.api.dto.SignUpDTO;
 import com.example.android.grocerylist.ui.common.TokenSaver;
 import com.example.android.grocerylist.ui.items.MainActivity;
@@ -120,7 +120,7 @@ public class SignUpActivity extends AppCompatActivity {
             signUpDTO.setEmail(email);
             signUpDTO.setPassword(password);
             RetrofitGenerator retrofitGenerator = new RetrofitGenerator(getApplicationContext());
-            APIService service = retrofitGenerator.createService(APIService.class);
+            SignUpAPIService service = retrofitGenerator.createService(SignUpAPIService.class);
             Call<String> call = service.signUp(signUpDTO);
             call.enqueue(new Callback<String>() {
                 @Override

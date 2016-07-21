@@ -3,7 +3,7 @@ package com.example.android.grocerylist.service;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.example.android.grocerylist.api.APIService;
+import com.example.android.grocerylist.api.ItemsAPIService;
 import com.example.android.grocerylist.api.RetrofitGenerator;
 import com.example.android.grocerylist.api.dto.TaskDTO;
 import com.example.android.grocerylist.dal.SqlRepository;
@@ -25,7 +25,7 @@ public class SyncNewService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         RetrofitGenerator retrofitGenerator = new RetrofitGenerator(getApplicationContext());
-        APIService service = retrofitGenerator.createService(APIService.class);
+        ItemsAPIService service = retrofitGenerator.createService(ItemsAPIService.class);
         SqlRepository repository = new SqlRepository(getApplicationContext());
         ArrayList<TaskModel> taskModels = repository.findNewItems();
         for (TaskModel model : taskModels) {

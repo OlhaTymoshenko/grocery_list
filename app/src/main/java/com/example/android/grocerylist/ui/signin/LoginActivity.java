@@ -24,8 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.grocerylist.R;
-import com.example.android.grocerylist.api.APIService;
 import com.example.android.grocerylist.api.RetrofitGenerator;
+import com.example.android.grocerylist.api.SignInAPIService;
 import com.example.android.grocerylist.api.dto.LoginDTO;
 import com.example.android.grocerylist.ui.common.TokenSaver;
 import com.example.android.grocerylist.ui.items.MainActivity;
@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
                     RetrofitGenerator retrofitGenerator = new RetrofitGenerator(getApplicationContext());
-                    APIService service = retrofitGenerator.createService(APIService.class);
+                    SignInAPIService service = retrofitGenerator.createService(SignInAPIService.class);
                     Call<String> call = service.signInFb(loginResult.getAccessToken().getToken());
                     call.enqueue(new Callback<String>() {
                         @Override
@@ -213,7 +213,7 @@ public class LoginActivity extends AppCompatActivity {
             loginDTO.setEmail(email);
             loginDTO.setPassword(password);
             RetrofitGenerator retrofitGenerator = new RetrofitGenerator(getApplicationContext());
-            APIService service = retrofitGenerator.createService(APIService.class);
+            SignInAPIService service = retrofitGenerator.createService(SignInAPIService.class);
             Call<String> call = service.signIn(loginDTO);
             call.enqueue(new Callback<String>() {
                 @Override

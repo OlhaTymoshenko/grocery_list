@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Environment;
 import android.util.Log;
 
-import com.example.android.grocerylist.api.APIService;
+import com.example.android.grocerylist.api.UserAPIService;
 import com.example.android.grocerylist.api.RetrofitGenerator;
 import com.example.android.grocerylist.ui.items.MainActivity;
 import com.example.android.grocerylist.ui.profile.UserPhotoActivity;
@@ -30,7 +30,7 @@ public class FileUploadService extends IntentService {
     @Override
     protected void onHandleIntent(final Intent intent) {
         RetrofitGenerator retrofitGenerator = new RetrofitGenerator(getApplicationContext());
-        APIService service = retrofitGenerator.createService(APIService.class);
+        UserAPIService service = retrofitGenerator.createService(UserAPIService.class);
         final File file = (File) intent.getExtras().getSerializable("image");
         assert file != null;
         MultipartBody.Part part = MultipartBody.Part.createFormData("avatar", file.getName(),
