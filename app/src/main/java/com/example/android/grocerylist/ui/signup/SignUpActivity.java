@@ -119,7 +119,8 @@ public class SignUpActivity extends AppCompatActivity {
             signUpDTO.setName(name);
             signUpDTO.setEmail(email);
             signUpDTO.setPassword(password);
-            APIService service = RetrofitGenerator.createService(APIService.class);
+            RetrofitGenerator retrofitGenerator = new RetrofitGenerator(getApplicationContext());
+            APIService service = retrofitGenerator.createService(APIService.class);
             Call<String> call = service.signUp(signUpDTO);
             call.enqueue(new Callback<String>() {
                 @Override

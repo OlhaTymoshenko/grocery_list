@@ -106,7 +106,8 @@ public class LoginActivity extends AppCompatActivity {
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    APIService service = RetrofitGenerator.createService(APIService.class);
+                    RetrofitGenerator retrofitGenerator = new RetrofitGenerator(getApplicationContext());
+                    APIService service = retrofitGenerator.createService(APIService.class);
                     Call<String> call = service.signInFb(loginResult.getAccessToken().getToken());
                     call.enqueue(new Callback<String>() {
                         @Override
@@ -211,7 +212,8 @@ public class LoginActivity extends AppCompatActivity {
             LoginDTO loginDTO = new LoginDTO();
             loginDTO.setEmail(email);
             loginDTO.setPassword(password);
-            APIService service = RetrofitGenerator.createService(APIService.class);
+            RetrofitGenerator retrofitGenerator = new RetrofitGenerator(getApplicationContext());
+            APIService service = retrofitGenerator.createService(APIService.class);
             Call<String> call = service.signIn(loginDTO);
             call.enqueue(new Callback<String>() {
                 @Override
