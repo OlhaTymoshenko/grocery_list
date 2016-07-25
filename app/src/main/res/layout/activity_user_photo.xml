@@ -39,7 +39,7 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingStart="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/take_picture"
+            android:text="@string/take_picture_button"
             android:textColor="@color/colorText"
             android:textSize="20sp"/>
 
@@ -54,7 +54,7 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingStart="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/select_picture"
+            android:text="@string/select_picture_button"
             android:textColor="@color/colorText"
             android:textSize="20sp"/>
 

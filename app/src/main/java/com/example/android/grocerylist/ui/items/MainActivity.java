@@ -64,6 +64,13 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                R.string.drawer_open, R.string.drawer_close);
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.addDrawerListener(drawerToggle);
+
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +78,7 @@ public class MainActivity extends AppCompatActivity
                 new ItemDialogFragment().show(getFragmentManager(), "dialog");
             }
         });
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
@@ -91,36 +98,6 @@ public class MainActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "Something wrong", Toast.LENGTH_SHORT).show();
                         return true;
                 }
-            }
-        });
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-                R.string.drawer_open, R.string.drawer_close);
-        drawerToggle.setDrawerIndicatorEnabled(true);
-        drawerLayout.addDrawerListener(drawerToggle);
-        Intent serviceIntent = new Intent(this, UserDataLoadService.class);
-        startService(serviceIntent);
-        getLoaderManager().initLoader(USER_MODEL_LOADER_ID, null, new LoaderManager.LoaderCallbacks<UserModel>() {
-            @Override
-            public Loader<UserModel> onCreateLoader(int id, Bundle args) {
-                return new UserDataLoader(MainActivity.this);
-            }
-
-            @Override
-            public void onLoadFinished(Loader<UserModel> loader, UserModel data) {
-                if (data != null) {
-                    TextView textViewName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
-                    assert textViewName != null;
-                    textViewName.setText(data.getUserName());
-                    TextView textViewEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
-                    assert textViewEmail != null;
-                    textViewEmail.setText(data.getUserEmail());
-                }
-            }
-
-            @Override
-            public void onLoaderReset(Loader<UserModel> loader) {
-
             }
         });
         LinearLayout container = (LinearLayout) navigationView.getHeaderView(0).findViewById(R.id.profile_image_container);
@@ -147,8 +124,37 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
         );
+
+        Intent serviceIntent = new Intent(this, UserDataLoadService.class);
+        startService(serviceIntent);
+
+        getLoaderManager().initLoader(USER_MODEL_LOADER_ID, null, new LoaderManager.LoaderCallbacks<UserModel>() {
+            @Override
+            public Loader<UserModel> onCreateLoader(int id, Bundle args) {
+                return new UserDataLoader(MainActivity.this);
+            }
+
+            @Override
+            public void onLoadFinished(Loader<UserModel> loader, UserModel data) {
+                if (data != null) {
+                    TextView textViewName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
+                    assert textViewName != null;
+                    textViewName.setText(data.getUserName());
+                    TextView textViewEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
+                    assert textViewEmail != null;
+                    textViewEmail.setText(data.getUserEmail());
+                }
+            }
+
+            @Override
+            public void onLoaderReset(Loader<UserModel> loader) {
+
+            }
+        });
+
         Intent intent = new Intent(this, ItemsUpdateService.class);
         startService(intent);
+
         adapter = new ItemAdapter();
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
         assert recyclerView != null;
