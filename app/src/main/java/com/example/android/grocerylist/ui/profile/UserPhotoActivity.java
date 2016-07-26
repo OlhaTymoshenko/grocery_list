@@ -26,9 +26,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.grocerylist.ui.common.ImageLoader;
 import com.example.android.grocerylist.R;
 import com.example.android.grocerylist.service.FileUploadService;
+import com.example.android.grocerylist.ui.common.ImageLoader;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,22 +52,30 @@ public class UserPhotoActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 0;
     static final int MY_PERMISSIONS_REQUEST = 1;
     static final int PICK_IMAGE = 1;
-    public final static String BROADCAST_ACTION_2 = "close activity";
+    public static final String BROADCAST_ACTION_2 = "close activity";
+    public static final String FILE_PATH = "filePath";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_photo);
-
         imageView = (ImageView) findViewById(R.id.user_photo);
-        getWindow().getDecorView().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                ImageLoader imageLoader = new ImageLoader(getApplicationContext());
-                imageLoader.loadImage(getString(R.string.picasso_url), getWindow().getDecorView().getWidth(), 0, imageView);
-                getWindow().getDecorView().removeOnLayoutChangeListener(this);
-            }
-        });
+
+        if (savedInstanceState != null) {
+            currentPhotoPath = savedInstanceState.getString(FILE_PATH);
+            Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+            imageView.setImageBitmap(bitmap);
+            image = new File(currentPhotoPath);
+        } else {
+            getWindow().getDecorView().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    ImageLoader imageLoader = new ImageLoader(getApplicationContext());
+                    imageLoader.loadImage(getString(R.string.picasso_url), getWindow().getDecorView().getWidth(), 0, imageView);
+                    getWindow().getDecorView().removeOnLayoutChangeListener(this);
+                }
+            });
+        }
 
         TextView textViewTakePicture = (TextView) findViewById(R.id.take_picture_text_view);
         assert textViewTakePicture != null;
@@ -120,6 +128,12 @@ public class UserPhotoActivity extends AppCompatActivity {
 
         IntentFilter filter = new IntentFilter(BROADCAST_ACTION_2);
         registerReceiver(receiver, filter);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(FILE_PATH, currentPhotoPath);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
