@@ -35,6 +35,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -221,6 +222,7 @@ public class LoginActivity extends AppCompatActivity {
                         String token = response.body();
                         TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
                         tokenSaver.saveToken(token);
+                        Log.d("InstanceID token ", FirebaseInstanceId.getInstance().getToken());
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();

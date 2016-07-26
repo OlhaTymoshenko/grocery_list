@@ -59,6 +59,15 @@ public class SqlRepository {
         EventBus.getDefault().post(new ItemsUpdatedEvent());
     }
 
+    public void deleteItemByRemoteId(Integer remoteId) {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        String selection = ItemWriterContract.ItemEntry.COLUMN_NAME_REMOTE_ID + " =?";
+        String[] selectionArgs = {String.valueOf(remoteId)};
+        database.delete(ItemWriterContract.ItemEntry.TABLE_NAME, selection, selectionArgs);
+        database.close();
+        EventBus.getDefault().post(new ItemsUpdatedEvent());
+    }
+
     public void updateItems(ArrayList<TaskModel> taskModels) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();

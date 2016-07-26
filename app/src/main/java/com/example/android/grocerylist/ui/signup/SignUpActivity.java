@@ -17,6 +17,7 @@ import com.example.android.grocerylist.api.SignUpAPIService;
 import com.example.android.grocerylist.api.dto.SignUpDTO;
 import com.example.android.grocerylist.ui.common.TokenSaver;
 import com.example.android.grocerylist.ui.items.MainActivity;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -129,6 +130,7 @@ public class SignUpActivity extends AppCompatActivity {
                         String token = response.body();
                         TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
                         tokenSaver.saveToken(token);
+                        Log.d("InstanceID token ", FirebaseInstanceId.getInstance().getToken());
                         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();

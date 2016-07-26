@@ -37,3 +37,5 @@ dependencies {
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     compile 'com.google.firebase:firebase-messaging:9.2.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

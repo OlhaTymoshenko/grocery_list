@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.grocerylist.ui.common.ImageLoader;
 import com.example.android.grocerylist.R;
@@ -171,6 +172,9 @@ public class UserPhotoActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             takePicture();
+        } else {
+            Toast.makeText(getApplicationContext(), "This action requires permissions",
+                    Toast.LENGTH_SHORT).show();
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
