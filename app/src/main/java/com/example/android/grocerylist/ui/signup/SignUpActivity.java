@@ -15,6 +15,7 @@ import com.example.android.grocerylist.R;
 import com.example.android.grocerylist.api.RetrofitGenerator;
 import com.example.android.grocerylist.api.SignUpAPIService;
 import com.example.android.grocerylist.api.dto.SignUpDTO;
+import com.example.android.grocerylist.ui.common.FirebaseTokenUploader;
 import com.example.android.grocerylist.ui.common.TokenSaver;
 import com.example.android.grocerylist.ui.items.MainActivity;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -130,12 +131,16 @@ public class SignUpActivity extends AppCompatActivity {
                         String token = response.body();
                         TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
                         tokenSaver.saveToken(token);
+                        FirebaseTokenUploader firebaseTokenUploader =
+                                new FirebaseTokenUploader(getApplicationContext());
+                        firebaseTokenUploader.uploadToken();
                         Log.d("InstanceID token ", FirebaseInstanceId.getInstance().getToken());
                         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Try again", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Try again", Toast.LENGTH_LONG)
+                                .show();
                     }
                 }
 

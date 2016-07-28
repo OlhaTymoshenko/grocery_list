@@ -27,6 +27,7 @@ import com.example.android.grocerylist.R;
 import com.example.android.grocerylist.api.RetrofitGenerator;
 import com.example.android.grocerylist.api.SignInAPIService;
 import com.example.android.grocerylist.api.dto.LoginDTO;
+import com.example.android.grocerylist.ui.common.FirebaseTokenUploader;
 import com.example.android.grocerylist.ui.common.TokenSaver;
 import com.example.android.grocerylist.ui.items.MainActivity;
 import com.example.android.grocerylist.ui.signup.SignUpActivity;
@@ -117,6 +118,9 @@ public class LoginActivity extends AppCompatActivity {
                                 String token = response.body();
                                 TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
                                 tokenSaver.saveToken(token);
+                                FirebaseTokenUploader firebaseTokenUploader =
+                                        new FirebaseTokenUploader(getApplicationContext());
+                                firebaseTokenUploader.uploadToken();
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -222,6 +226,9 @@ public class LoginActivity extends AppCompatActivity {
                         String token = response.body();
                         TokenSaver tokenSaver = new TokenSaver(getApplicationContext());
                         tokenSaver.saveToken(token);
+                        FirebaseTokenUploader firebaseTokenUploader =
+                                new FirebaseTokenUploader(getApplicationContext());
+                        firebaseTokenUploader.uploadToken();
                         Log.d("InstanceID token ", FirebaseInstanceId.getInstance().getToken());
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
