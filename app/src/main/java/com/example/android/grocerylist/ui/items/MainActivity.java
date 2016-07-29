@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.grocerylist.ui.common.FirebaseTokenUploader;
 import com.example.android.grocerylist.ui.common.ImageLoader;
 import com.example.android.grocerylist.R;
 import com.example.android.grocerylist.dal.SqlRepository;
@@ -214,6 +215,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void logout() {
+        FirebaseTokenUploader firebaseTokenUploader =
+                new FirebaseTokenUploader(getApplicationContext());
+        firebaseTokenUploader.deleteToken();
         SharedPreferences preferences = getApplicationContext()
                 .getSharedPreferences("token", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();

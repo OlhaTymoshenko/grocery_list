@@ -47,4 +47,23 @@ public class FirebaseTokenUploader {
             }
         });
     }
+
+    public void deleteToken() {
+        String deviceId = Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        RetrofitGenerator retrofitGenerator = new RetrofitGenerator(context);
+        FirebaseAPIService apiService = retrofitGenerator.createService(FirebaseAPIService.class);
+        Call<Void> voidCall = apiService.deleteFirebaseToken(deviceId);
+        voidCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+    }
 }
