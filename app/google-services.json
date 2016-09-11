@@ -15,6 +15,69 @@
       },
       "oauth_client": [
         {
+          "client_id": "524107815568-j8stginvca6i42j51ibkidjfi87lkohp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.grocerylist",
+            "certificate_hash": "1FAB4627AD4BF70113653B784F33F91104D6A26C"
+          }
+        },
+        {
+          "client_id": "524107815568-ij4mfoh631ikcae6n5nbbrnvb43rpgom.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.grocerylist",
+            "certificate_hash": "F87A707CBE0529DDBC9C542CD3088834598540BC"
+          }
+        },
+        {
+          "client_id": "524107815568-bv0popb4lfv1ff5jnugmuqcvul4cjob8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB42bqMfCzcOyx6KkBNeFzqtZiAnotGEns"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524107815568:android:76d184cba357ed8c",
+        "android_client_info": {
+          "package_name": "ua.com.amicablesoft.android.grocerylist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "524107815568-cdss8sn5ols59h93m54s2p7lbossadf8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ua.com.amicablesoft.android.grocerylist",
+            "certificate_hash": "1FAB4627AD4BF70113653B784F33F91104D6A26C"
+          }
+        },
+        {
+          "client_id": "524107815568-8jb90jbaed9qqsci8t4jasmmirvh0dc4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ua.com.amicablesoft.android.grocerylist",
+            "certificate_hash": "F87A707CBE0529DDBC9C542CD3088834598540BC"
+          }
+        },
+        {
           "client_id": "524107815568-bv0popb4lfv1ff5jnugmuqcvul4cjob8.apps.googleusercontent.com",
           "client_type": 3
         }

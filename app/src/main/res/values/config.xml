@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="facebook_app_id">1290333240981429</string>
-    <string name="picasso_url">http://46.101.241.44:8080/user/avatar/</string>
-    <string name="url">http://46.101.241.44:8080/</string>
+    <string name="picasso_url">http://amicablesoft.com.ua:8080/user/avatar/</string>
 </resources>
