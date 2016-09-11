@@ -11,3 +11,4 @@ It was developed with using:
 * SQLite
 
 Check it out on [Play Market](https://play.google.com/store/apps/details?id=ua.com.amicablesoft.android.grocerylist).
+
