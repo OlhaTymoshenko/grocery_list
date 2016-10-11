@@ -103,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
+                    showProgress(true);
                     RetrofitGenerator retrofitGenerator = new RetrofitGenerator(getApplicationContext());
                     SignInAPIService service = retrofitGenerator.createService(SignInAPIService.class);
                     Call<String> call = service.signInFb(loginResult.getAccessToken().getToken());
