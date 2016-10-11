@@ -9,20 +9,29 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import io.fabric.sdk.android.Fabric;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ua.com.amicablesoft.android.grocerylist.R;
 import ua.com.amicablesoft.android.grocerylist.api.RetrofitGenerator;
 import ua.com.amicablesoft.android.grocerylist.api.SignInAPIService;
@@ -31,16 +40,6 @@ import ua.com.amicablesoft.android.grocerylist.ui.common.FirebaseTokenUploader;
 import ua.com.amicablesoft.android.grocerylist.ui.common.TokenSaver;
 import ua.com.amicablesoft.android.grocerylist.ui.items.MainActivity;
 import ua.com.amicablesoft.android.grocerylist.ui.signup.SignUpActivity;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.google.firebase.iid.FirebaseInstanceId;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A login screen that offers login via email/password.
@@ -57,15 +56,11 @@ public class LoginActivity extends AppCompatActivity {
     private String email;
     private String password;
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window window = getWindow();
-        window.setStatusBarColor(ContextCompat
-                .getColor(getApplicationContext(), R.color.colorPrimaryDark));
-        Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
-        setSupportActionBar(toolbar);
+        Fabric.with(this, new Crashlytics());
         SharedPreferences preferences = getApplicationContext()
                 .getSharedPreferences("token", MODE_PRIVATE);
         if (preferences.contains("token")) {
@@ -229,7 +224,10 @@ public class LoginActivity extends AppCompatActivity {
                         FirebaseTokenUploader firebaseTokenUploader =
                                 new FirebaseTokenUploader(getApplicationContext());
                         firebaseTokenUploader.uploadToken();
-                        Log.d("InstanceID token ", FirebaseInstanceId.getInstance().getToken());
+                        String firebaseToken = FirebaseInstanceId.getInstance().getToken();
+                        if (firebaseToken != null) {
+                            Log.d("InstanceID token ", firebaseToken);
+                        }
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();

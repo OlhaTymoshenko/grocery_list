@@ -3,16 +3,15 @@ package ua.com.amicablesoft.android.grocerylist.service;
 import android.app.IntentService;
 import android.content.Intent;
 
-import ua.com.amicablesoft.android.grocerylist.api.ItemsAPIService;
-import ua.com.amicablesoft.android.grocerylist.api.RetrofitGenerator;
-import ua.com.amicablesoft.android.grocerylist.dal.SqlRepository;
-import ua.com.amicablesoft.android.grocerylist.model.TaskModel;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Response;
+import ua.com.amicablesoft.android.grocerylist.api.ItemsAPIService;
+import ua.com.amicablesoft.android.grocerylist.api.RetrofitGenerator;
+import ua.com.amicablesoft.android.grocerylist.dal.SqlRepository;
+import ua.com.amicablesoft.android.grocerylist.model.TaskModel;
 
 
 public class SyncDeletedService extends IntentService {
@@ -29,16 +28,18 @@ public class SyncDeletedService extends IntentService {
 
         ArrayList<TaskModel> taskModels = repository.findDeletedItems();
         for (TaskModel model : taskModels) {
-            int id = model.getRemoteId();
-            Call<Void> call = service.deleteTask(id);
-            try {
-                Response<Void> response = call.execute();
-                if (response.isSuccessful()) {
-                    SqlRepository sqlRepository = new SqlRepository(getApplicationContext());
-                    sqlRepository.setDeletedSynced(model.getItemId());
+            Integer id = model.getRemoteId();
+            if (id != null) {
+                Call<Void> call = service.deleteTask(id);
+                try {
+                    Response<Void> response = call.execute();
+                    if (response.isSuccessful()) {
+                        SqlRepository sqlRepository = new SqlRepository(getApplicationContext());
+                        sqlRepository.setDeletedSynced(model.getItemId());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }

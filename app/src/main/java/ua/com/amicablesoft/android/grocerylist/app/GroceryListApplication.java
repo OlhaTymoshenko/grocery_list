@@ -12,5 +12,6 @@ public class GroceryListApplication extends Application {
     public void onCreate() {
         super.onCreate();
         FacebookSdk.sdkInitialize(this);
+        
     }
 }

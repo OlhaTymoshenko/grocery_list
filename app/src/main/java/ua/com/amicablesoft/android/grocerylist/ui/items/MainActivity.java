@@ -27,22 +27,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ua.com.amicablesoft.android.grocerylist.ui.common.FirebaseTokenUploader;
-import ua.com.amicablesoft.android.grocerylist.ui.common.ImageLoader;
-import ua.com.amicablesoft.android.grocerylist.R;
-import ua.com.amicablesoft.android.grocerylist.dal.SqlRepository;
-import ua.com.amicablesoft.android.grocerylist.ui.profile.UserDataLoader;
-import ua.com.amicablesoft.android.grocerylist.model.TaskModel;
-import ua.com.amicablesoft.android.grocerylist.model.UserModel;
-import ua.com.amicablesoft.android.grocerylist.service.ItemsUpdateService;
-import ua.com.amicablesoft.android.grocerylist.service.UserDataLoadService;
-import ua.com.amicablesoft.android.grocerylist.ui.profile.UserPhotoActivity;
-import ua.com.amicablesoft.android.grocerylist.ui.signin.LoginActivity;
 import com.facebook.login.LoginManager;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import ua.com.amicablesoft.android.grocerylist.R;
+import ua.com.amicablesoft.android.grocerylist.dal.SqlRepository;
+import ua.com.amicablesoft.android.grocerylist.model.TaskModel;
+import ua.com.amicablesoft.android.grocerylist.model.UserModel;
+import ua.com.amicablesoft.android.grocerylist.service.ItemsUpdateService;
+import ua.com.amicablesoft.android.grocerylist.service.UserDataLoadService;
+import ua.com.amicablesoft.android.grocerylist.ui.common.FirebaseTokenUploader;
+import ua.com.amicablesoft.android.grocerylist.ui.common.ImageLoader;
+import ua.com.amicablesoft.android.grocerylist.ui.profile.UserDataLoader;
+import ua.com.amicablesoft.android.grocerylist.ui.profile.UserPhotoActivity;
+import ua.com.amicablesoft.android.grocerylist.ui.signin.LoginActivity;
 
 public class MainActivity extends AppCompatActivity
         implements ItemDialogFragment.ItemDialogListener {

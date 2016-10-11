@@ -26,10 +26,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ua.com.amicablesoft.android.grocerylist.R;
-import ua.com.amicablesoft.android.grocerylist.service.FileUploadService;
-import ua.com.amicablesoft.android.grocerylist.ui.common.ImageLoader;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,6 +35,10 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import ua.com.amicablesoft.android.grocerylist.R;
+import ua.com.amicablesoft.android.grocerylist.service.FileUploadService;
+import ua.com.amicablesoft.android.grocerylist.ui.common.ImageLoader;
 
 public class UserPhotoActivity extends AppCompatActivity {
     private String currentPhotoPath;

@@ -8,16 +8,17 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import ua.com.amicablesoft.android.grocerylist.R;
-import ua.com.amicablesoft.android.grocerylist.model.TaskModel;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import ua.com.amicablesoft.android.grocerylist.R;
+import ua.com.amicablesoft.android.grocerylist.model.TaskModel;
 
 /**
  * Created by lapa on 11.04.16.
  */
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
+
     private final List<TaskModel> data = new ArrayList<>();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
